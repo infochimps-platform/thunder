@@ -1,4 +1,4 @@
 require 'spec_helper'
 
-describe Thunder::CLI do
+describe Thunder::Cli::Connection do
 end
