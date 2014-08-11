@@ -8,6 +8,7 @@ require 'rest_client'
 require 'thor'
 require 'formatador'
 require 'parseconfig'
+require 'thor'
 
 require 'thunder/keypair'
 require 'thunder/base'
