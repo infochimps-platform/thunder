@@ -1,0 +1,123 @@
+# abstract connection class:
+#   - throws errors if something hasn't been implemented
+#   - allows sharing of common methods (what few there may be)
+module Thunder
+  class CloudImplementation
+    def self.raise_undeclared
+      raise Exception.new("This hasn't been implemented yet.")
+    end
+
+    # Constructor #
+    def initialize(options)
+      @options = options
+
+      # This builds up a list of extra parameters to pass to cfndsl.
+      sym_lookup = { ".yaml" => :yaml, ".json" => :json }
+      @template_generation_extras = (options["generation_parameters"] || []).map {|f| [sym_lookup[File.extname(f)], f] }
+      bad_generators = @template_generation_extras.select {|f| !f[0] }.map {|f| f[1]}
+      throw Exception.new("Unknown generation parameter file types: #{bad_generators.join ', '}") if bad_generators.length > 0
+
+    end
+
+    # Manipulator Methods #
+    def create
+      CloudImplementation::raise_undeclared
+    end
+
+    def delete
+      CloudImplementation::raise_undeclared
+    end
+
+    def update
+      CloudImplementation::raise_undeclared
+    end
+
+    # Viewers Methods #
+
+    def parameters
+      CloudImplementation::raise_undeclared
+    end
+
+    def stacks
+      CloudImplementation::raise_undeclared
+    end
+
+    def outputs
+      CloudImplementation::raise_undeclared
+    end
+
+    def events
+      CloudImplementation::raise_undeclared
+    end
+
+    # Support Functions for poll events #
+
+    #returns a lambda that, given some x, returns a unique identifier for x
+    def event_id_getter
+      CloudImplementation::raise_undeclared
+    end
+
+    #returns a lambda that, given some x, returns true if x is a tail_event that
+    #indicates polling should terminate
+    def poll_terminator(name)
+      CloudImplementation::raise_undeclared
+    end
+
+    #returns a lambda that, given some x, returns the resource_status for x
+    def resource_status
+      CloudImplementation::raise_undeclared
+    end
+
+    ####################
+    # Common Utilities #
+    ####################
+
+    # HASHLOADING #
+
+    def supported_format(extension, parsers)
+      return parsers.has_key?(extension)
+    end
+
+    # This loads a file as directed by parsers and returns the result
+    def hashload(filename, parsers)
+      extension = File.extname(filename)
+      err = "Filename has an unsupported extension: #{filename}"
+      raise Exception.new(err) unless supported_format(extension,parsers)
+
+      parser = parsers[extension]
+      return parser.call(filename)
+    end
+
+    #this loads a sequence of hashes from filenames and merges them together.
+    def plural_hashload(filenames, parsers)
+      #load and parse files
+      result = filenames.inject({}) { |result,filename|
+        result.merge!( hashload(filename,parsers) ) }
+      # Replace nil with empty string
+      hash = Hash[result.map { |k,v| [k, v == nil ? "" : v] }]
+      return hash
+    end
+
+    #sort array according to order.
+    # :ETC sorts everything not specified according to normal.
+    #best for displaying information of particular interest preferrentially at
+    #the beginning or end.
+    def self.sort_override(array, order)
+      pivot_i  = order.find_index(:ETC)
+      pre_etc  = order[0...pivot_i]
+      post_etc = order[pivot_i+1..-1]
+
+      pre_array = array.select { |x| pre_etc.include? x }
+      post_array = array.select { |x| post_etc.include? x }
+      etc_array = array.select { |x|
+        not (pre_etc.include? x or post_etc.include? x) }
+
+      pre_array.sort_by! { |x| pre_etc.index x }
+      etc_array.sort_by!
+      post_array.sort_by! { |x| post_etc.index x }
+
+      ordered_array = pre_array + etc_array + post_array
+      return ordered_array
+    end
+  end
+end

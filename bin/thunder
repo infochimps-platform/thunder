@@ -57,9 +57,9 @@ class ConThor < Thor
         if not contype
           raise Exception.new("No con type chosen. Use options -o or -a, or run thunder config.")
         elsif contype == :openstack
-          @connection = ThunderOS.new(config, options)
+          @connection = Thunder::Openstack.new(config, options)
         elsif contype == :aws
-          @connection = ThunderAWS.new(config, options)
+          @connection = Thunder::AWS.new(config, options)
         end
       end
 
@@ -168,8 +168,8 @@ class Stack < ConThor
     default = old_hash
     default["flavor"] = flavor
 
-    config = {"aws" => ThunderAWS::get_native,
-              "openstack" => ThunderOS::get_native}[flavor]
+    config = {"aws" => Thunder::AWS::get_native,
+              "openstack" => Thunder::Openstack::get_native}[flavor]
 
     if config == nil
       puts "Flavor unrecognized, or no native data found."
@@ -318,7 +318,7 @@ class Stack < ConThor
   end
 
 
-  desc "outputs name", "Get the outputs from sack 'name.'"
+  desc "outputs name", "Get the outputs from stack 'name.'"
   method_option :json,
                 :aliases => "-j",
                 :type => :boolean,
@@ -389,6 +389,7 @@ class Stack < ConThor
       start = Time.now
       offset = 0
       seen_before = []
+
       while (Time.now - start) < timeout
 
         begin
@@ -482,9 +483,9 @@ class Stack < ConThor
       def get_kp_con(kp_name)
         config = load_config
         if options[:openstack]
-          kp_con = ThunderOS::Keypair.new(kp_name, config)
+          kp_con = Thunder::Openstack::Keypair.new(kp_name, config)
         else
-          kp_con = ThunderAWS::Keypair.new(kp_name, config)
+          kp_con = Thunder::AWS::Keypair.new(kp_name, config)
         end
       end
     end
