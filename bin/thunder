@@ -2,4 +2,4 @@
 require 'thunder'
 require 'thunder/cli'
 
-Stack.start
+Thunder::Cli::Stack.start
