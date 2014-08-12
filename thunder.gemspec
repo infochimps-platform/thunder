@@ -11,7 +11,8 @@ Gem::Specification.new do |gem|
   gem.homepage      = 'https://github.com/infochimps-platform/thunder.git'
   gem.summary       = 'Ruby CLI for AWS CloudFormation and Openstack'
   gem.description   = <<-DESC.gsub(/^ {4}/, '').chomp
-    Weavr
+    Thunder is a Ruby CLI which provides a unified interface between
+    Amazon CloudFormation and Openstack Heat.
   DESC
 
   gem.files         = `git ls-files`.split($/)
