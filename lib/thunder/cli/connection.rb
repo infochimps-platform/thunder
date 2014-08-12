@@ -52,9 +52,20 @@ module Thunder
           config_file ||= config_options[:config_file]
           config_section = config_options[:config_file_section]
 
+          if config_file.nil?
+            $stderr.puts "Missing config" 
+            exit 1
+          end
+
           config_filename = File.expand_path(config_file )
           conf = YAML.load(File.open(config_filename).read)
+
           config = conf[ config_section ]
+
+          unless config 
+            $stderr.puts "'#{config_filename}' is missing config section '#{config_section}'"
+            exit 1
+          end
 
           config.inject({}) { |hash,(k,v)| hash[k] = v.is_a?(String) ? v.strip : v; hash }
         end
