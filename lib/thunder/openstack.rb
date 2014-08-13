@@ -132,7 +132,7 @@ module Thunder
 
     def remote_param_default(name)
       stack_id = get_stack_id(name)
-      os_outputs(name, stack_id)
+      os_outputs(name, stack_id).inject({}){|h,v| h[v["output_key"]]=v["output_value"];h}
     end
 
     def remote_param_old(long_name)
@@ -148,7 +148,7 @@ module Thunder
         ".json" => lambda {|r| JSON.parse(File.read(r)) },
         ".yaml" => lambda {|r| YAML.load(File.read(r)) },
         ".OLD" => lambda {|x| remote_param_old(x) },
-        "" =>  lambda {|x| remote_param_default(x).inject({}){|h,v| h[v["output_key"]]=v["output_value"];h}}
+        "" =>  lambda {|x| remote_param_default(x)}
       }
     end
 
