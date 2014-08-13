@@ -62,18 +62,21 @@ module Thunder
       ##############
       # Parameters #
       ##############
-      desc "parameters template", "Get default parameters for a stack."
+      desc "parameters stack template parameterss*", "Get default parameters for a stack template and merge additional params."
 
       method_option :generation_parameters,
       :aliases => "-g",
       :type => :array,
       :description => "File containing generation parameters."
-      def parameters(template)
-        template = con.load_template(args[0], rmt_template=true)
+      def parameters(*args)
+        template_name = args[0]
+        parameterss = args[1..-1]
+        unfiltered_parameters = con.load_parameters(parameterss)
 
         puts "# Default parameter values for #{args[0]}"
         puts
 
+        template = con.load_template(template_name, rmt_template=true)
         template["Parameters"].each do |name, value|
           # Turn the description into a comment
           width = 80
@@ -83,8 +86,27 @@ module Thunder
           end
           # Build something like   name: Default
           # for the rest of the parameter
-          puts({ name => value["Default"]}.to_yaml.sub(/^---\n/,''))
+          default_parm_value = { name => value["Default"]}.to_yaml.sub(/^---\n/,'')
+          if unfiltered_parameters.has_key?(name) then
+            puts("# Stack Default value")
+            puts( default_parm_value.gsub(/^/,"# ") )
+            puts( { name => unfiltered_parameters[name]}.to_yaml.sub(/^---\n/,''))
+          else
+            puts( default_parm_value )
+          end
           puts
+        end
+
+        extra_parameters = unfiltered_parameters.keys - template["Parameters"].keys
+        unless extra_parameters.empty? then
+          puts
+          puts "# Extra Parameters"
+          puts "#  These paramers are not included in the template, but for some reason "
+          puts "#  were in the paramters files supplied with the generation of this"
+          puts "#  config file."
+          extra_parameters.each do |name|
+            puts( { name => unfiltered_parameters[name]}.to_yaml.sub(/^---\n/,''))
+          end
         end
 
       end
