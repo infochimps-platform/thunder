@@ -148,7 +148,7 @@ module Thunder
         ".json" => lambda {|r| JSON.parse(File.read(r)) },
         ".yaml" => lambda {|r| YAML.load(File.read(r)) },
         ".OLD" => lambda {|x| remote_param_old(x) },
-        "" =>  lambda {|x| remote_param_default(x) }
+        "" =>  lambda {|x| remote_param_default(x).inject({}){|h,v| h[v["output_key"]]=v["output_value"];h}}
       }
     end
 
