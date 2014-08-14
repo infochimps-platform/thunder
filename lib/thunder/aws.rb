@@ -252,8 +252,6 @@ module Thunder
         @name = name
 
         config_aws(config)
-        # @ec2 = temp.ec2
-        # @kpc = temp.kpc
       end
 
       def get_pub
