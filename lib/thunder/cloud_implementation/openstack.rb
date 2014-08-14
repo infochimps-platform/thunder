@@ -8,6 +8,9 @@ module Thunder
   module CloudImplementation
     class Openstack
       include CloudImplementation
+
+      attr_reader :compute
+
       def initialize(thunder_config, options={})
         super(options)
 
@@ -191,50 +194,33 @@ module Thunder
         table = events
         Formatador.display_table(table)
       end
+
       ############
       # Keypairs #
       ############
 
-      class Keypair # < CloudImplementation::Keypair
+      def get_pubkey name
+        key_pairs = @compute.list_key_pairs.body["keypairs"]
+        key_pairs = key_pairs.map { |kp| kp["keypair"] } #flatten
 
-        attr_reader :pk_path
+        key_pair = key_pairs.select { |x| x["name"] == name }
 
-        def initialize(name, config, pk_path = nil)
-          @pk_path = pk_path || File.join(ENV['HOME'], '.ssh', name)
-          @name = name
-          temp = Openstack.new(config) #just ripping the cons out of here
-          @compute = temp.compute
+        if key_pair.length > 1
+          pp key_pair
+          raise Exception.new("Key pair name ambiguous?")
+        elsif key_pair.length == 0
+          return nil
+        else
+          return key_pair[0]
         end
+      end
 
-        def get_pub
-          key_pairs = @compute.list_key_pairs.body["keypairs"]
-          key_pairs = key_pairs.map { |kp| kp["keypair"] } #flatten
+      def delete_pubkey name
+        @compute.delete_key_pair name
+      end
 
-          key_pair = key_pairs.select { |x| x["name"] == @name }
-
-          if key_pair.length > 1
-            pp key_pair
-            raise Exception.new("Key pair name ambiguous?")
-          elsif key_pair.length == 0
-            return nil
-          else
-            return key_pair[0]
-          end
-
-          if no_local and no_aws
-            puts "WARNING: Literally nothing has changed."
-          end
-        end
-
-        def delete
-          @compute.delete_key_pair(@name)
-        end
-
-        #public key -> stack
-        # (this is the heart of "create")
-        def send_key(public_key)
-          @compute.create_key_pair(@name, public_key)
-        end
+      def send_key(name, public_key)
+        @compute.create_key_pair(name, public_key)
       end
 
       ###############
@@ -349,17 +335,6 @@ module Thunder
         return response
 
       end
-
-      #####################
-      # Steal Connections #
-      #####################
-      # Because encapsulation is for the weak-minded.
-      # ... really, because it's needed for the keypair stuff.
-
-      def compute
-        @compute
-      end
-
     end
   end
 end

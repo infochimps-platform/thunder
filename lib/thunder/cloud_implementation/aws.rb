@@ -232,45 +232,28 @@ module Thunder
                                       ["UsePreviousValue", true] : ["ParameterValue", v]]] }
       end
 
-      class Keypair
-        # get the a public key of name from the stack
+      # Keypair Methods
 
-        attr_reader :pk_path
+      def get_pubkey name
+        key_pair = ec2.key_pairs.select { |x| x.name == name }
 
-        def initialize(name, config, pk_path = nil)
-
-          @pk_path = pk_path || File.join(ENV['HOME'], '.ssh', name)
-          @name = name
-          config_aws(config)
+        if key_pair.length > 1
+          pp key_pair
+          raise Exception.new("Key pair name ambiguous?")
+        elsif key_pair.length == 0
+          return nil
+        else
+          return key_pair[0]
         end
+      end
 
-        def get_pub
-          key_pair = ec2.key_pairs.select { |x| x.name == @name }
+      def delete_pubkey name
+        get_pubkey(name).delete
+      end
 
-          if key_pair.length > 1
-            pp key_pair
-            raise Exception.new("Key pair name ambiguous?")
-          elsif key_pair.length == 0
-            return nil
-          else
-            return key_pair[0]
-          end
-
-          if no_local and no_aws
-            puts "WARNING: Literally nothing has changed."
-          end
-        end
-
-        def delete
-          get_pub.delete
-        end
-
-        #public key -> stack
-        # (this is the heart of "create")
-        def send_key(public_key)
-          ec2.key_pairs.import(@name, public_key)
-        end
-      end    
+      def send_key(name, public_key)
+        ec2.key_pairs.import(name, public_key)
+      end
 
     end
   end
