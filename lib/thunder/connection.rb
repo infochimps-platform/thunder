@@ -14,8 +14,6 @@ module Thunder
           contype = :aws
         end
 
-        # TODO: add and environment variable selector for stack type?
-
         # check cli opts
         if config_options[:openstack]
           contype = :openstack
@@ -27,9 +25,9 @@ module Thunder
         if not contype
           raise Exception.new("No con type chosen. Use options -o or -a, or run thunder config.")
         elsif contype == :openstack
-          @connection = Thunder::Openstack.new(config, options)
+          @connection = Thunder::CloudImplementation::Openstack.new(config, options)
         elsif contype == :aws
-          @connection = Thunder::AWS.new(config, options)
+          @connection = Thunder::CloudImplementation::AWS.new(config, options)
         end
       end
 

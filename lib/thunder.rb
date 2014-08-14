@@ -11,8 +11,8 @@ require 'parseconfig'
 require 'thor'
 
 require 'thunder/cloud_implementation'
-require 'thunder/aws'
-require 'thunder/openstack'
+require 'thunder/cloud_implementation/aws'
+require 'thunder/cloud_implementation/openstack'
 require 'thunder/version'
 require 'thunder/connection'
 

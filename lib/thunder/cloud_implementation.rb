@@ -1,8 +1,7 @@
-# abstract connection class:
-#   - throws errors if something hasn't been implemented
+# abstract connection module:
 #   - allows sharing of common methods (what few there may be)
 module Thunder
-  class CloudImplementation
+  module CloudImplementation
 
     # Constructor #
     def initialize(options)
