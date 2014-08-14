@@ -1,3 +1,3 @@
 module Thunder
-  VERSION = '0.14.3'
+  VERSION = '1.0.2'
 end

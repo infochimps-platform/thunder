@@ -1,5 +1,13 @@
 # Changelog
 
+##Version 1.0.1
+* Parameters is fixed -- now merges config files as it did when srpgo came out.
+
+##Version 1.0.0/0.14.3
+* This was never a real version. Should have been an 1.0 change, but I actually put 0.14.3 in there at some point.
+* Broke a number of core functions into a subcommand `stack`.
+* Major infrastructure changes.
+
 ##Version 0.14.2
 * JSON/YAML output options for:
   * outputs
