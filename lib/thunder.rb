@@ -10,7 +10,6 @@ require 'formatador'
 require 'parseconfig'
 require 'thor'
 
-require 'thunder/keypair'
 require 'thunder/cloud_implementation'
 require 'thunder/aws'
 require 'thunder/openstack'

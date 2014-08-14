@@ -193,17 +193,14 @@ module Thunder
     # Keypairs #
     ############
 
-    class Keypair < CloudImplementation::Keypair
+    class Keypair # < CloudImplementation::Keypair
+
+      attr_reader :pk_path
 
       def initialize(name, config, pk_path = nil)
-        if pk_path == nil
-          super(name)
-        else
-          super(name, pk_path = pk_path)
-        end
-
+        @pk_path = pk_path || File.join(ENV['HOME'], '.ssh', name)
         @name = name
-        temp = ThunderOS.new(config) #just ripping the cons out of here
+        temp = Openstack.new(config) #just ripping the cons out of here
         @compute = temp.compute
       end
 

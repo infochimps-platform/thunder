@@ -239,18 +239,16 @@ module Thunder
     # Keypairs #
     ############
 
-    class Keypair < CloudImplementation::Keypair
+    class Keypair #  < CloudImplementation::Keypair
       include AWSInterfaces
       # get the a public key of name from the stack
+
+      attr_reader :pk_path
+
       def initialize(name, config, pk_path = nil)
-        if pk_path == nil
-          super(name)
-        else
-          super(name, pk_path = pk_path)
-        end
 
+        @pk_path = pk_path || File.join(ENV['HOME'], '.ssh', name)
         @name = name
-
         config_aws(config)
       end
 
