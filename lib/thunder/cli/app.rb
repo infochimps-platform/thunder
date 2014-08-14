@@ -1,6 +1,7 @@
 module Thunder
   module Cli
-    class App < Thunder::Cli::Connection
+    class App < Thor
+      include Thunder::Cli::Connection
       package_name "app"
       include Thor::Actions
       THUNDIR = ENV["HOME"]+"/.thunder/"

@@ -1,6 +1,8 @@
 module Thunder
   module Cli
-    class Stack < Thunder::Cli::Connection
+    class Stack < Thor
+      include Thunder::Cli::Connection
+
       package_name "stack"
       include Thor::Actions
 
