@@ -135,7 +135,7 @@ module Thunder
       :type => :boolean,
       :desc => "Dump as JSON."
       def list
-        table = con.stacks
+        table = con.present_stacks
 
         if options[:json]
           puts table.to_json

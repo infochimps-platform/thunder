@@ -78,7 +78,7 @@ module Thunder
       ###########
       # Observe #
       ###########
-      def stacks
+      def present_stacks
         @orch.stacks.map { |stak| { :Name   => stak.stack_name,
             :Status => stak.stack_status,
             :Reason => stak.stack_status_reason } }

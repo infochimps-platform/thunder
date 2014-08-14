@@ -28,10 +28,6 @@ module Thunder
         @kpc ||= ::AWS::EC2::KeyPairCollection.new
       end
 
-      def stacks
-        cfm.stacks
-      end
-
       def config_aws(thunder_config)
         ::AWS.config(region: thunder_config['region'],
                      access_key_id: thunder_config['aws_access_key_id'],
@@ -98,7 +94,8 @@ module Thunder
       ###########
       # Observe #
       ###########
-      def stacks
+
+      def present_stacks
         cfm.stacks.map { |stak| { :Name=>stak.name,
             :Status=>stak.status,
             :Reason => stak.status_reason } }
@@ -109,7 +106,7 @@ module Thunder
       end
 
       def events(name)
-        (Array stacks[name].events).reverse
+        (Array cfm.stacks[name].events).reverse
       end
 
       # Support Functions for poll events #
