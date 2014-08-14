@@ -1,9 +1,9 @@
 require 'thunder'
-require 'thunder/cli'
-require 'thunder/cli/app'
 
 require 'aruba'
 require 'aruba/api'
+
+Dir[File.expand_path('../support/**/*.rb', __FILE__)].each{ |f| require f }
 
 RSpec.configure do |rspec|
   include Aruba::Api

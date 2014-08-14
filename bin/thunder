@@ -1,6 +1,4 @@
 #!/usr/bin/env ruby
 require 'thunder'
-require 'thunder/cli'
-require 'thunder/cli/app'
 
 Thunder::Cli::App.start
