@@ -6,16 +6,39 @@
 #
 OLD_TRIGGER = "OLD"
 module Thunder
+
+  module AWSInterfaces
+
+    def cfm
+      @cfm ||= ::AWS::CloudFormation.new
+    end
+
+    def ec2
+      @ec2 ||= ::AWS::EC2.new
+    end
+
+    def kpc
+      @kpc ||= ::AWS::EC2::KeyPairCollection.new
+    end
+
+    def stacks
+      cfm.stacks
+    end
+
+    def config_aws(thunder_config)
+      ::AWS.config(region: thunder_config['region'],
+                   access_key_id: thunder_config['aws_access_key_id'],
+                   secret_access_key: thunder_config['aws_secret_access_key'])
+    end
+  end
+
   class AWS < CloudImplementation
+    include AWSInterfaces
+
     def initialize(thunder_config, options={})
       super(options)
 
       config_aws(thunder_config)
-      @cfm = ::AWS::CloudFormation.new
-      @ec2 = ::AWS::EC2.new
-      @kpc = ::AWS::EC2::KeyPairCollection.new
-
-      @stacks = @cfm.stacks
     end
 
     #################
@@ -45,7 +68,7 @@ module Thunder
       filtered_parameters = filter_parameters(parameters, template)
 
       begin
-        @cfm.stacks.create(name,
+        cfm.stacks.create(name,
                            template.to_json,
                            :parameters => filtered_parameters)
       rescue ::AWS::CloudFormation::Errors::AlreadyExistsException
@@ -54,9 +77,9 @@ module Thunder
     end
 
     def delete(name)
-      if @cfm.stacks[name].exists?
+      if cfm.stacks[name].exists?
         puts "Stack '"+name+"' exists."
-        output = @cfm.stacks[name].delete
+        output = cfm.stacks[name].delete
         puts "Delete request submitted."
       else
         puts "Stack '"+name+"' does not exist."
@@ -71,7 +94,7 @@ module Thunder
       formatted_parameters = aws_parameter_json(filtered_parameters)
 
       #do it
-      @cfm.stacks[name].update(:template => template.to_json,
+      cfm.stacks[name].update(:template => template.to_json,
                                :parameters => formatted_parameters)
     end
 
@@ -79,17 +102,17 @@ module Thunder
     # Observe #
     ###########
     def stacks
-      @cfm.stacks.map { |stak| { :Name=>stak.name,
+      cfm.stacks.map { |stak| { :Name=>stak.name,
           :Status=>stak.status,
           :Reason => stak.status_reason } }
     end
 
     def outputs(name)
-      @cfm.stacks[name].outputs.map { |out| { :Key=>out.key, :Value=>out.value } }
+      cfm.stacks[name].outputs.map { |out| { :Key=>out.key, :Value=>out.value } }
     end
 
     def events(name)
-      (Array @stacks[name].events).reverse
+      (Array stacks[name].events).reverse
     end
 
     # Support Functions for poll events #
@@ -121,7 +144,7 @@ module Thunder
         ".rb"   => lambda {|r| JSON.parse(CfnDsl::eval_file_with_extras(r, extras).to_json)},
         "" => lambda { |x|
           raise Exception.new("Template value: #{x} -- Did you leave off the file extension?") unless rmt_template
-          JSON.parse(@cfm.stacks[x].template) }
+          JSON.parse(cfm.stacks[x].template) }
       }
     end
 
@@ -132,14 +155,14 @@ module Thunder
     # Parameters-related #
 
     def remote_param_default(name)
-      @cfm.stacks[name].outputs.inject({}) {|hash,item|
+      cfm.stacks[name].outputs.inject({}) {|hash,item|
         hash[item.key] = item.value; hash }
     end
 
     def remote_param_old(long_name)
       ext = File.extname(long_name)
       name = long_name[0 ... -ext.length]
-      @cfm.stacks[name].parameters.inject({}) { |hash,item|
+      cfm.stacks[name].parameters.inject({}) { |hash,item|
         hash[item[0]] = OLD_TRIGGER; hash }
     end
 
@@ -199,11 +222,25 @@ module Thunder
       Formatador.display_table(table)
     end
 
+    ###############
+    # Connections #
+    ###############
+
+    #convert hash to an AWS parameter json, which is a list of hashes of
+    #   [{"key" => key, "value" => value}, ... ]
+    #hash values "USE_PREVIOUS_VALUE" trigger special behavior
+    OLD_TRIGGER = "USE_PREVIOUS_VALUE"
+    def aws_parameter_json(hash)
+      return hash.map { |k,v| Hash[[["ParameterKey", k], v == OLD_TRIGGER ?
+                                    ["UsePreviousValue", true] : ["ParameterValue", v]]] }
+    end
+
     ############
     # Keypairs #
     ############
 
     class Keypair < CloudImplementation::Keypair
+      include AWSInterfaces
       # get the a public key of name from the stack
       def initialize(name, config, pk_path = nil)
         if pk_path == nil
@@ -214,13 +251,13 @@ module Thunder
 
         @name = name
 
-        temp = Thunder::AWS.new(config)
-        @ec2 = temp.ec2
-        @kpc = temp.kpc
+        config_aws(config)
+        # @ec2 = temp.ec2
+        # @kpc = temp.kpc
       end
 
       def get_pub
-        key_pair = @ec2.key_pairs.select { |x| x.name == @name }
+        key_pair = ec2.key_pairs.select { |x| x.name == @name }
 
         if key_pair.length > 1
           pp key_pair
@@ -243,51 +280,8 @@ module Thunder
       #public key -> stack
       # (this is the heart of "create")
       def send_key(public_key)
-        @ec2.key_pairs.import(@name, public_key)
+        ec2.key_pairs.import(@name, public_key)
       end
-    end
-
-    ###############
-    # Connections #
-    ###############
-
-    #convert hash to an AWS parameter json, which is a list of hashes of
-    #   [{"key" => key, "value" => value}, ... ]
-    #hash values "USE_PREVIOUS_VALUE" trigger special behavior
-    OLD_TRIGGER = "USE_PREVIOUS_VALUE"
-    def aws_parameter_json(hash)
-      return hash.map { |k,v| Hash[[["ParameterKey", k], v == OLD_TRIGGER ?
-                                    ["UsePreviousValue", true] : ["ParameterValue", v]]] }
-    end
-
-    def config_aws(thunder_config)
-      creds = {}
-      creds[:id] = thunder_config["aws_access_key_id"]
-      creds[:secret] = thunder_config["aws_secret_access_key"]
-      creds[:region] = thunder_config["region"]
-
-      ::AWS.config(:region => creds[:region],
-                 :access_key_id => creds[:id],
-                 :secret_access_key => creds[:secret] )
-    end
-
-
-    #####################
-    # Steal Connections #
-    #####################
-    # Because encapsulation is for the weak-minded.
-    # ... really, because it's needed for the keypair stuff.
-
-    def cfm
-      @cfm
-    end
-
-    def ec2
-      @ec2
-    end
-
-    def kpc
-      @kpc
     end
 
   end
