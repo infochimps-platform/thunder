@@ -3,9 +3,6 @@
 #   - allows sharing of common methods (what few there may be)
 module Thunder
   class CloudImplementation
-    def self.raise_undeclared
-      raise Exception.new("This hasn't been implemented yet.")
-    end
 
     # Constructor #
     def initialize(options)
@@ -17,55 +14,6 @@ module Thunder
       bad_generators = @template_generation_extras.select {|f| !f[0] }.map {|f| f[1]}
       throw Exception.new("Unknown generation parameter file types: #{bad_generators.join ', '}") if bad_generators.length > 0
 
-    end
-
-    # Manipulator Methods #
-    def create
-      CloudImplementation::raise_undeclared
-    end
-
-    def delete
-      CloudImplementation::raise_undeclared
-    end
-
-    def update
-      CloudImplementation::raise_undeclared
-    end
-
-    # Viewers Methods #
-
-    def parameters
-      CloudImplementation::raise_undeclared
-    end
-
-    def stacks
-      CloudImplementation::raise_undeclared
-    end
-
-    def outputs
-      CloudImplementation::raise_undeclared
-    end
-
-    def events
-      CloudImplementation::raise_undeclared
-    end
-
-    # Support Functions for poll events #
-
-    #returns a lambda that, given some x, returns a unique identifier for x
-    def event_id_getter
-      CloudImplementation::raise_undeclared
-    end
-
-    #returns a lambda that, given some x, returns true if x is a tail_event that
-    #indicates polling should terminate
-    def poll_terminator(name)
-      CloudImplementation::raise_undeclared
-    end
-
-    #returns a lambda that, given some x, returns the resource_status for x
-    def resource_status
-      CloudImplementation::raise_undeclared
     end
 
     ####################
