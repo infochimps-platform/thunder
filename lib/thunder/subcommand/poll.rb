@@ -1,7 +1,7 @@
 module Thunder
-  module Cli
+  module Subcommand
     class Poll < Thor
-      include Thunder::Cli::Connection
+      include Thunder::Connection
 
       POLL_SLEEP = 15
       SUCCESS = 0

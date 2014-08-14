@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 require 'thunder'
 
-Thunder::Cli::App.start
+Thunder::App.start

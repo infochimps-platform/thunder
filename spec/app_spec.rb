@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Thunder::Cli::App do
+describe Thunder::App do
 
   context 'When I run `thunder`' do
     it 'shows help output' do

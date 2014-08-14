@@ -1,7 +1,7 @@
 module Thunder
-  module Cli
+  module Subcommand
     class Keypair < Thor
-      include Thunder::Cli::Connection
+      include Thunder::Connection
       package_name "keypair"
       include Thor::Actions
 
