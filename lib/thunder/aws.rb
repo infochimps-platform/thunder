@@ -115,6 +115,7 @@ module Thunder
 
     def template_parsers(rmt_template)
       extras = @template_generation_extras
+      extras.push [:raw, 'OrchestrationEnvironment = "cloudformation"']
       return {
         ".json" => lambda {|r| JSON.parse(File.read(r)) },
         ".rb"   => lambda {|r| JSON.parse(CfnDsl::eval_file_with_extras(r, extras).to_json)},
