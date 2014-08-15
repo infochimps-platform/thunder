@@ -5,8 +5,8 @@ require 'thunder/version'
 Gem::Specification.new do |gem|
   gem.name          = 'thunder'
   gem.version       = Thunder::VERSION
-  gem.authors       = ['Dan Simonson']
-  gem.email         = ['dan.simonson@infochimps.com']
+  gem.authors       = ['Dan Simonson', 'Chris Howe']
+  gem.email         = ['dan.simonson@gmail.com']
   gem.licenses      = ['Apache 2.0']
   gem.homepage      = 'https://github.com/infochimps-platform/thunder.git'
   gem.summary       = 'Ruby CLI for AWS CloudFormation and Openstack'
@@ -30,4 +30,10 @@ Gem::Specification.new do |gem|
   gem.add_dependency('thor', '~> 0.19.1')
   gem.add_dependency('parseconfig', '~> 1.0.4')
   gem.add_dependency('fog', '~> 1.23.0')
+
+  #from sherpa
+  gem.add_dependency('etc')
+  gem.add_dependency('fileutils')
+  gem.add_dependency('securerandom')
+  gem.add_dependency('json')
 end
