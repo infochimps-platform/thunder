@@ -30,8 +30,4 @@ Gem::Specification.new do |gem|
   gem.add_dependency('thor', '~> 0.19.1')
   gem.add_dependency('parseconfig', '~> 1.0.4')
   gem.add_dependency('fog', '~> 1.23.0')
-
-  #for sherpa, from srpgo
-  gem.add_dependency('etc')
-  gem.add_dependency('json')
 end
