@@ -12,6 +12,7 @@ module Thunder
       #     up to where cloud formation takes place, to where thunder happens.
       #     This is precisely what this script does, though the mountain is
       #     metaphorical.
+      # 3) SheRPa has "srp" in it, in the right order.
 
       #why not just srpgo(*args)? 
       # This allows for explicit documentation of available commands in a Thor-
