@@ -31,9 +31,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency('parseconfig', '~> 1.0.4')
   gem.add_dependency('fog', '~> 1.23.0')
 
-  #from sherpa
+  #for sherpa, from srpgo
   gem.add_dependency('etc')
-  gem.add_dependency('fileutils')
-  gem.add_dependency('securerandom')
   gem.add_dependency('json')
 end

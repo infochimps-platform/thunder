@@ -9,6 +9,8 @@ require 'thor'
 require 'formatador'
 require 'parseconfig'
 require 'thor'
+require 'fileutils' #sherpa
+require 'securerandom' #sherpa
 
 require 'thunder/cloud_implementation'
 require 'thunder/cloud_implementation/aws'

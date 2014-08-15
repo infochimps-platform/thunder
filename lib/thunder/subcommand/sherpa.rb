@@ -17,13 +17,13 @@ module Thunder
       # This allows for explicit documentation of available commands in a Thor-
       # like way. srpgo(*args) wouldn't exploit Thor's documentation style. 
 
-      desc "sherpa create stack_name template parameters* -g srp.yaml",
+      desc "create stack_name template parameters* -g srp.yaml",
             "srpgo style create: put template files in a bucket, create stack"
       def create(*args)
         srpgo("create", args)
       end 
 
-      desc "sherpa update stack_name template parameters* -g srp.yaml",
+      desc "update stack_name template parameters* -g srp.yaml",
             "srpgo style update: put file in a bucket, update stack"
       def update(*args)
         srpgo("update", args)
@@ -39,13 +39,6 @@ module Thunder
           #pardon my indentation
           #I literally copied srpgo right in here, and
           #I don't wanna stretch my window
-=begin        
-#get these motherfuckers in the gem file
-require 'etc'
-require 'fileutils'
-require 'securerandom'
-require 'json'
-=end
 
 # This script aids in launching a builder script by
 #  1) compiling all of the client and foundation.rb templates into json
