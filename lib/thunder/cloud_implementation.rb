@@ -28,7 +28,7 @@ module Thunder
     # This loads a file as directed by parsers and returns the result
     def hashload(filename, parsers)
       extension = File.extname(filename)
-      err = "Filename has an unsupported extension: #{filename}"
+      err = "Filename #{filename} appears to have an unsupported extension: #{extension}. I bet you're wondering 'what do you mean, that IS supported.' If that's the case, MAKE SURE YOU REMEMBERED TO INCLUDE THE STACK NAME IN YOUR COMMAND--ALL YOUR PARAMS ARE GETTING OFFSET, AND THIS IS THE EIGHTH TIME I'VE FORGOTTEN THIS AND REMEMBERED THE ROOT CAUSE. (RageException) "
       raise Exception.new(err) unless supported_format(extension,parsers)
 
       parser = parsers[extension]
