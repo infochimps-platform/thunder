@@ -18,13 +18,13 @@ module Thunder
       # like way. srpgo(*args) wouldn't exploit Thor's documentation style. 
 
       desc "create stack_name template parameters* -g srp.yaml",
-            "srpgo style create: put template files in a bucket, create stack"
+            "srpgo style create. (must be run from launch-kickoff)"
       def create(*args)
         srpgo("create", args)
       end 
 
       desc "update stack_name template parameters* -g srp.yaml",
-            "srpgo style update: put file in a bucket, update stack"
+            "srpgo style update. (must be run from launch-kickoff)"
       def update(*args)
         srpgo("update", args)
       end 
@@ -73,6 +73,15 @@ temp_dir = ".upload"
 # Name of the paramteter to use to tell the builder stack where to find its client jsons
 template_url_parameter = "TemplateUrlBase"
 
+# launch-kickoff home directory
+# THIS IS GONNA BE A TRICKY FIX -- add to .thunder config?
+# Travis suggested adding this as a "find the launch-kickoff dir"
+# utility function somewhere. A good idea.
+kickoff_home = "/Users/dansimonson/Desktop/kickoff/launch-kickoff" #File.expand_path('../..', __FILE__)
+
+kickoff_home = ENV["PWD"]
+err = "sherpa must be run from launch-kickoff."
+raise Exception.new(err) unless /^.*launch-kickoff$/.match(kickoff_home)
 
 # If any generation parameters are supplied, they must be at the end of the thunder
 # command line. These will be passed to cfndsl when we build the clients. Currently these
@@ -106,12 +115,6 @@ uniq=[user,time,uuid].join("-")
 updir = FileUtils.mkdir_p( File.join(temp_dir,uniq) )[0]
 cldir = FileUtils.mkdir_p( File.join(updir,"clients" ))[0]
 fddir = FileUtils.mkdir_p( File.join(updir,"foundation"))[0]
-
-# launch-kickoff home directory
-# THIS IS GONNA BE A TRICKY FIX -- add to .thunder config?
-# Travis suggested adding this as a "find the launch-kickoff dir"
-# utility function somewhere. A good idea.
-kickoff_home = File.expand_path('../..', __FILE__)
 
 
 #run cfndsl for rb files and pipe each to the appropriate JSON file.
