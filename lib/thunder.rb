@@ -19,4 +19,5 @@ require 'thunder/connection'
 require 'thunder/subcommand/poll'
 require 'thunder/subcommand/keypair'
 require 'thunder/subcommand/stack'
+require 'thunder/subcommand/sherpa'
 require 'thunder/app' # App must be loaded last due to Thor subcommands class refs
