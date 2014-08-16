@@ -1,6 +1,8 @@
 module Thunder
-  module Cli
-    class Stack < Thunder::Cli::Connection
+  module Subcommand
+    class Stack < Thor
+      include Thunder::Connection
+
       package_name "stack"
       include Thor::Actions
 
@@ -133,7 +135,7 @@ module Thunder
       :type => :boolean,
       :desc => "Dump as JSON."
       def list
-        table = con.stacks
+        table = con.present_stacks
 
         if options[:json]
           puts table.to_json
