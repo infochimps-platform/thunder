@@ -5,8 +5,8 @@ require 'thunder/version'
 Gem::Specification.new do |gem|
   gem.name          = 'thunder'
   gem.version       = Thunder::VERSION
-  gem.authors       = ['Dan Simonson']
-  gem.email         = ['dan.simonson@infochimps.com']
+  gem.authors       = ['Dan Simonson', 'Chris Howe']
+  gem.email         = ['dan.simonson@gmail.com']
   gem.licenses      = ['Apache 2.0']
   gem.homepage      = 'https://github.com/infochimps-platform/thunder.git'
   gem.summary       = 'Ruby CLI for AWS CloudFormation and Openstack'

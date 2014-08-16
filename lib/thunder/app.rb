@@ -129,5 +129,8 @@ module Thunder
     desc "poll [COMMAND...]", "Poll a stack."
     subcommand "poll", Subcommand::Poll
 
+    desc "sherpa [COMMAND...]", "aka srpgo: Upload to buckets and run thunder."
+    subcommand "sherpa", Subcommand::Sherpa
+
   end
 end
