@@ -28,6 +28,9 @@ module Thunder
         @kpc ||= ::AWS::EC2::KeyPairCollection.new
       end
 
+      # This is hard-coded at the moment to expediate development.
+      # Expect this to change in the future to become more dynamic
+      # and more secure
       def s3
         @s3 ||= ::AWS::S3.new(region: 'us-east-1')
       end
@@ -95,6 +98,9 @@ module Thunder
                                 :parameters => formatted_parameters)
       end
 
+      # This is hard-coded at the moment to expediate development.
+      # Expect this to change in the future to become more dynamic
+      # and more secure
       def remote_file_bucket
         find_or_create_bucket('filestore.platform.infochimps')
       end
