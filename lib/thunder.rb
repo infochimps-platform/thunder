@@ -1,17 +1,16 @@
 require 'aws-sdk'
-require 'json'
 require 'cfndsl'
-require 'pp'
-require 'sshkey'
+require 'etc'
+require 'fileutils'
 require 'fog'
-require 'rest_client'
-require 'thor'
 require 'formatador'
+require 'json'
 require 'parseconfig'
+require 'pp'
+require 'rest_client'
+require 'securerandom'
+require 'sshkey'
 require 'thor'
-require 'fileutils' #sherpa
-require 'securerandom' #sherpa
-require 'etc' #sherpa
 
 require 'thunder/cloud_implementation'
 require 'thunder/cloud_implementation/aws'
@@ -21,6 +20,7 @@ require 'thunder/connection'
 
 require 'thunder/subcommand/poll'
 require 'thunder/subcommand/keypair'
+require 'thunder/subcommand/remote_file'
 require 'thunder/subcommand/stack'
 require 'thunder/subcommand/sherpa'
 require 'thunder/app' # App must be loaded last due to Thor subcommands class refs
