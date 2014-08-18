@@ -12,10 +12,10 @@ module Thunder
 
       def initialize(thunder_config, options={})
         super(options)
-        
+
         config_aws(thunder_config)
       end
-      
+
       def cfm
         @cfm ||= ::AWS::CloudFormation.new
       end
@@ -26,6 +26,10 @@ module Thunder
 
       def kpc
         @kpc ||= ::AWS::EC2::KeyPairCollection.new
+      end
+
+      def s3
+        @s3 ||= ::AWS::S3.new(region: 'us-east-1')
       end
 
       def config_aws(thunder_config)
@@ -89,6 +93,35 @@ module Thunder
         #do it
         cfm.stacks[name].update(:template => template.to_json,
                                 :parameters => formatted_parameters)
+      end
+
+      def remote_file_bucket
+        find_or_create_bucket('filestore.platform.infochimps')
+      end
+
+      def find_or_create_bucket(name, options = {})
+        return s3.buckets[name] if s3.buckets[name].exists?
+        s3.buckets.create(name, options)
+      end
+
+      def persistent_key params
+        key = params[:key] || params[:filename]
+        File.join(params[:stack], key)
+      end
+
+      def persist_remote_file params
+        s3file = remote_file_bucket.objects[persistent_key params]
+        s3file.write(file: params[:filename], acl: :public_read)
+        s3file.public_url
+      end
+
+      def retrieve_remote_file params
+        s3file = remote_file_bucket.objects[persistent_key params]
+        File.open(params[:filename], 'w') do |f|
+          s3file.read do |chunk|
+            f.write chunk
+          end
+        end
       end
 
       ###########
