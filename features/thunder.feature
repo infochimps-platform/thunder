@@ -8,10 +8,12 @@ Feature: Thunder
     Then the output should match:
     """
     app commands:
-      thunder config .*
-      thunder config_import .*
-      thunder help .*
-      thunder keypair .*
-      thunder poll .*
-      thunder stack .*
+      thunder config .*$
+      thunder config_import .*$
+      thunder help .*$
+      thunder keypair .*$
+      thunder poll .*$
+      thunder remote_file .*$
+      thunder sherpa .*$
+      thunder stack .*$
     """

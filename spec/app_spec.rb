@@ -13,6 +13,8 @@ describe Thunder::App do
           thunder help .*
           thunder keypair .*
           thunder poll .*
+          thunder remote_file .*
+          thunder sherpa .*
           thunder stack .*
       HELP
     end
