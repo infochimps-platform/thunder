@@ -132,5 +132,7 @@ module Thunder
     desc "sherpa [COMMAND...]", "aka srpgo: Upload to buckets and run thunder."
     subcommand "sherpa", Subcommand::Sherpa
 
+    desc 'remote_file', 'persist a file for remote access later'
+    subcommand 'remote_file', Subcommand::RemoteFile
   end
 end
