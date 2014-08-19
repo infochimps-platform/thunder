@@ -83,8 +83,8 @@ module Thunder
       default = old_hash
       default["flavor"] = flavor
 
-      config = {"aws" => Thunder::AWS::get_native,
-        "openstack" => Thunder::Openstack::get_native}[flavor]
+      config = {"aws" => Thunder::CloudImplementation::AWS::get_native,
+        "openstack" => Thunder::CloudImplementation::Openstack::get_native}[flavor]
 
       if config == nil
         puts "Flavor unrecognized, or no native data found."
