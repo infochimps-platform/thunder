@@ -45,7 +45,6 @@ module Thunder
         parameters = load_parameters(parameterss)
         filtered_parameters = filter_parameters(parameters, template)
 
-
         begin
           @orch.stacks.create({:stack_name => name,
                                 :template => template.to_json,
@@ -62,7 +61,14 @@ module Thunder
 
       def update(name, template, parameterss)
         #load all the crap
-        template = load_template(template, rmt_template=true)
+        template = load_template(template)
+
+        # For some reason yet undertermined, trying to load old parameter values in openstack does not
+        # work. Luckily it is not a terribly important use case. Here we work around the problem by
+        # simply ingoring the directive to load old parameterss.
+
+        parameterss.reject! {|x| x=~/\.OLD$/}
+
         parameters = load_parameters(parameterss)
         filtered_parameters = filter_parameters(parameters, template)
 
