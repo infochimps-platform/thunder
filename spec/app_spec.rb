@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Thunder::App do
 
-  context 'When I run `thunder`' do
+  context 'running `thunder`' do
     it 'shows help output' do
       run_simple 'thunder'
       assert_exit_status 0      
