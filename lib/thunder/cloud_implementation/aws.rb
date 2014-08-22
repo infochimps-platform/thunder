@@ -12,10 +12,18 @@ module Thunder
     class AWS
       include CloudImplementation
 
-      def initialize(thunder_config, options={})
-        super(options)
+      def self.native_config
+        native_path = File.join(ENV['HOME'].to_s, '.aws/config')
+        source = ParseConfig.new native_path
+        source['default']
+      rescue => e
+        warn e.message
+        {}
+      end
 
-        config_aws(thunder_config)
+      def initialize(options)
+        super(options)
+        config_aws options
       end
 
       def cfm
@@ -43,24 +51,6 @@ module Thunder
                      secret_access_key: thunder_config['aws_secret_access_key'])
       end
 
-      #################
-      # Native Config #
-      #################
-
-      def self.get_native
-        native_path = ENV["HOME"] + "/.aws/config"
-
-        if File.exists? native_path
-          source = ParseConfig.new(native_path)
-          config = source["default"]
-
-          return config
-        end
-
-        puts native_path+" not found."
-        nil
-      end
-
       ##############
       # Manipulate #
       ##############
@@ -70,9 +60,7 @@ module Thunder
         filtered_parameters = filter_parameters(parameters, template)
 
         begin
-          cfm.stacks.create(name,
-                            template.to_json,
-                            :parameters => filtered_parameters)
+          cfm.stacks.create(name, template.to_json, parameters: filtered_parameters)
         rescue ::AWS::CloudFormation::Errors::AlreadyExistsException
           puts "Stack already exists."
         end
@@ -195,15 +183,13 @@ module Thunder
       # Parameters-related #
 
       def remote_param_default(name)
-        cfm.stacks[name].outputs.inject({}) {|hash,item|
-          hash[item.key] = item.value; hash }
+        cfm.stacks[name].outputs.inject({}){ |hash,item| hash[item.key] = item.value; hash }
       end
 
       def remote_param_old(long_name)
         ext = File.extname(long_name)
         name = long_name[0 ... -ext.length]
-        cfm.stacks[name].parameters.inject({}) { |hash,item|
-          hash[item[0]] = OLD_TRIGGER; hash }
+        cfm.stacks[name].parameters.inject({}){ |hash,item| hash[item[0]] = OLD_TRIGGER; hash }
       end
 
       def load_yaml_parameters(file)
@@ -216,12 +202,12 @@ module Thunder
         return o
       end
 
-      def parameters_parsers()
-        return {
-          ".json" => lambda {|r| JSON.parse(File.read(r)) },
-          ".yaml" => lambda {|r| load_yaml_parameters(r) },
-          ".OLD" => lambda {|x| remote_param_old(x) },
-          "" =>  lambda {|x| remote_param_default(x) }
+      def parameters_parsers
+        {
+          '.json' => lambda{ |r| JSON.parse File.read(r) },
+          '.yaml' => lambda{ |r| YAML.load File.read(r) },
+          '.OLD'  => lambda{ |x| remote_param_old x },
+          ''      => lambda{ |x| remote_param_default x },
         }
       end
 
