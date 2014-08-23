@@ -28,7 +28,7 @@ describe Thunder::Configuration do
 
   context '#update' do
     it 'updates the internal attributes in place' do
-      subject.populate!
+      subject.populate!(default: {})
       expect(subject[:foo]).to be_nil
       subject.update(foo: 'bar')
       expect(subject[:foo]).to eq('bar')
@@ -115,6 +115,8 @@ describe Thunder::Configuration do
       let(:example_yaml){ 'not real yaml' }
 
       it 'returns nil on any error' do
+        expect($stderr).to receive(:write).with(/could not load config/i)
+        expect($stderr).to receive(:write).with("\n")
         expect(subject.read_from_disk).to be_nil
       end
     end
