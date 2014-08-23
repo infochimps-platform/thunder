@@ -13,15 +13,15 @@ module Thunder
     end
 
     def aws_options
-      %w(aws_access_key_id aws_secret_access_key region)
+      %w(aws_access_key_id aws_secret_access_key region).map(&:to_sym)
     end
 
     def os_options
-      %w(openstack_auth_url openstack_username openstack_tenant openstack_api_key connection_options)
+      %w(openstack_auth_url openstack_username openstack_tenant openstack_api_key connection_options).map(&:to_sym)
     end
 
     def all_options
-      (aws_options + os_options).map(&:to_sym)
+      aws_options + os_options
     end
 
     def empty_configuration
