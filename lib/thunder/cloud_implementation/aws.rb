@@ -46,9 +46,9 @@ module Thunder
       end
 
       def config_aws(thunder_config)
-        ::AWS.config(region: thunder_config['region'],
-                     access_key_id: thunder_config['aws_access_key_id'],
-                     secret_access_key: thunder_config['aws_secret_access_key'])
+        ::AWS.config(region: thunder_config[:region],
+                     access_key_id: thunder_config[:aws_access_key_id],
+                     secret_access_key: thunder_config[:aws_secret_access_key])
       end
 
       ##############
