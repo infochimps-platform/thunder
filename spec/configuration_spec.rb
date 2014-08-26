@@ -115,8 +115,6 @@ describe Thunder::Configuration do
       let(:example_yaml){ 'not real yaml' }
 
       it 'returns nil on any error' do
-        expect($stderr).to receive(:write).with(/could not load config/i)
-        expect($stderr).to receive(:write).with("\n")
         expect(subject.read_from_disk).to be_nil
       end
     end
@@ -133,15 +131,15 @@ describe Thunder::Configuration do
       subject.populate!(default: {})
       subject.write_to_disk
       config = YAML.load File.read(example_config)
-      expect(config).to eq(default: {
-                             aws_access_key_id:     nil,
-                             aws_secret_access_key: nil,
-                             connection_options:    nil,
-                             openstack_api_key:     nil,
-                             openstack_auth_url:    nil,
-                             openstack_tenant:      nil,
-                             openstack_username:    nil,
-                             region:                nil })
+      expect(config).to eq('default' => {
+                             'aws_access_key_id'     => nil,
+                             'aws_secret_access_key' => nil,
+                             'connection_options'    => nil,
+                             'openstack_api_key'     => nil,
+                             'openstack_auth_url'    => nil,
+                             'openstack_tenant'      => nil,
+                             'openstack_username'    => nil,
+                             'region'                => nil })
     end
   end
 end

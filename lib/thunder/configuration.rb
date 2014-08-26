@@ -61,15 +61,14 @@ module Thunder
     end
 
     def read_from_disk
-      (YAML.load File.read(location)).deep_symbolize_keys
-    rescue
-      warn "Could not load config from #{location}"
-      nil
+      (YAML.load File.read(location)).deep_symbolize_keys rescue nil
     end
 
     def write_to_disk
       FileUtils.mkdir_p File.dirname(location)
-      File.open(location, 'wb'){ |f| f.puts internal_with_placeholders.to_yaml }
+      File.open(location, 'wb') do |f|
+        f.puts internal_with_placeholders.deep_stringify_keys.to_yaml
+      end
     end
   end
 end
