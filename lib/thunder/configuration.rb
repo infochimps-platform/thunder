@@ -2,7 +2,7 @@ module Thunder
   class Configuration
     def self.default_location
       config_dir = ENV['HOME'] ? File.join(ENV['HOME'], '.thunder') : Dir.pwd
-      File.join(config_dir, 'config.yaml')
+      File.join(config_dir, 'config')
     end
 
     attr_reader :location, :scope
