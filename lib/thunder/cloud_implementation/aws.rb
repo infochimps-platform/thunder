@@ -12,8 +12,8 @@ module Thunder
     class AWS
       include CloudImplementation
 
-      def self.native_config
-        native_path = File.join(ENV['HOME'].to_s, '.aws/config')
+      def self.native_config(path = nil)
+        native_path = path || File.join(ENV['HOME'].to_s, '.aws/config')
         source = ParseConfig.new native_path
         source['default']
       rescue => e

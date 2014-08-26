@@ -22,11 +22,11 @@ module Thunder
     end
 
     desc 'config_import flavor', 'Import config settings from native sources if they exist [aws, openstack].'
-    def config_import(flavor)
+    def config_import(flavor, location = nil)
       configuration.update(flavor: flavor)
       native = case flavor
-               when 'aws'       then Thunder::CloudImplementation::AWS.native_config
-               when 'openstack' then Thunder::CloudImplementation::Openstack.native_config
+               when 'aws'       then Thunder::CloudImplementation::AWS.native_config(location)
+               when 'openstack' then Thunder::CloudImplementation::Openstack.native_config(location)
                else
                  abort 'Flavor unrecognized'
                end

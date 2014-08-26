@@ -13,7 +13,7 @@ module Thunder
 
       attr_reader :compute
 
-      def self.native_config
+      def self.native_config(path = nil)
         {
           'openstack_auth_url'    => ENV['OS_AUTH_URL'],
           'openstack_username'    => ENV['OS_USERNAME'],
