@@ -40,8 +40,8 @@ module Thunder
         if aws has NO public key and there's NO private key:
           create a new private key, use it, and save it.
       LONGDESC
-      def create name
-        pk_path = private_key_path name
+      def create(name, location = nil)
+        pk_path = location || private_key_path(name)
         local = File.exists? pk_path
         unless con.get_pubkey(name)
           if local
