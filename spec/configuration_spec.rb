@@ -8,8 +8,8 @@ describe Thunder::Configuration do
   context '.default_location' do
     subject{ described_class }
 
-    it 'returns ~/.thunder/config.yaml' do
-      expect(subject.default_location).to eq(File.join(ENV['HOME'], '.thunder/config.yaml'))
+    it 'returns ~/.thunder/config' do
+      expect(subject.default_location).to eq(File.join(ENV['HOME'].to_s, '.thunder/config'))
     end
   end
 
