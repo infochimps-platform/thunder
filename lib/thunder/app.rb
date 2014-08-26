@@ -15,7 +15,7 @@ module Thunder
       user_values = {}
       user_values[:flavor] = ask('Stack flavor: ', limited_to: %w(aws openstack), default: 'aws')
       user_values[:poll_events_timeout] = Integer ask('Poll events timeout (in seconds):')
-      (configuration.aws_options + configuration.os_options).each{ |opt| user_values[opt] = ask(opt + ': ') }
+      configuration.all_options.each{ |opt| user_values[opt] = ask("#{opt}: ") }
       configuration.update user_values.select{ |_, val| val.to_s =~ /\w+/ }
       configuration.write_to_disk
       say "Done. Further changes can be made at #{configuration.location}"
@@ -35,19 +35,19 @@ module Thunder
       say "Config updated with native #{flavor}"
     end
 
-    desc 'stack [COMMAND...]', 'Stack actions'
+    desc 'stack [COMMAND]', 'Stack actions'
     subcommand 'stack', Subcommand::Stack
 
-    desc 'keypair [COMMAND...]', 'Do stuff with keypairs.'
+    desc 'keypair [COMMAND]', 'Do stuff with keypairs.'
     subcommand 'keypair', Subcommand::Keypair
 
-    desc 'poll [COMMAND...]', 'Poll a stack.'
+    desc 'poll [COMMAND]', 'Poll a stack.'
     subcommand 'poll', Subcommand::Poll
 
-    desc 'sherpa [COMMAND...]', 'aka srpgo: Upload to buckets and run thunder.'
+    desc 'sherpa [COMMAND]', 'aka srpgo: Upload to buckets and run thunder.'
     subcommand 'sherpa', Subcommand::Sherpa
 
-    desc 'remote_file', 'persist a file for remote access later'
+    desc 'remote_file [COMMAND]', 'persist a file for remote access later'
     subcommand 'remote_file', Subcommand::RemoteFile
   end
 end
