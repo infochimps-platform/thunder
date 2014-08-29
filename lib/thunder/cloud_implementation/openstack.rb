@@ -77,7 +77,8 @@ module Thunder
         @orch.update_stack(stack_id, name,
                            {:stack_name => name,
                              :template => template.to_json,
-                             :parameters => filtered_parameters})
+                             :parameters => filtered_parameters,
+                             :existing_parameters => true})
       end
 
 
