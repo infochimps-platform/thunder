@@ -48,7 +48,9 @@ module Thunder
         begin
           @orch.stacks.create({:stack_name => name,
                                 :template => template.to_json,
-                                :parameters => filtered_parameters})
+                                :parameters => filtered_parameters,
+                                :timeout_mins => 600
+                              })
         rescue Exception => e #idk the duplicate exception yet
           raise e
         end
@@ -78,7 +80,9 @@ module Thunder
                            {:stack_name => name,
                              :template => template.to_json,
                              :parameters => filtered_parameters,
-                             :existing_parameters => true})
+                             :existing_parameters => true,
+                             :timeout_mins => 600
+                           })
       end
 
 
