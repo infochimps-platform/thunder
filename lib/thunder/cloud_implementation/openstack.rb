@@ -167,7 +167,7 @@ module Thunder
         o = YAML.load(File.read(file))
         o.keys.each do |k|
           if o[k].respond_to? :has_key?
-            o[k] = Base64.encode64( o[k]["base64"]) if o[k].has_key? "base64"
+            o[k] = Base64.strict_encode64( o[k]["base64"]) if o[k].has_key? "base64"
           end
         end
         return o
