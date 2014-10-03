@@ -1,3 +1,5 @@
+require 'base64'
+
 #######################
 # OPENSTACK           #
 #######################
@@ -160,15 +162,25 @@ module Thunder
           hash[item[0]] = OLD_TRIGGER; hash }
       end
 
+
+      def load_yaml_parameters(file)
+        o = YAML.load(File.read(file))
+        o.keys.each do |k|
+          if o[k].respond_to? :has_key?
+            o[k] = Base64.encode64( o[k]["base64"]) if o[k].has_key? "base64"
+          end
+        end
+        return o
+      end
+
       def parameters_parsers()
         return {
           ".json" => lambda {|r| JSON.parse(File.read(r)) },
-          ".yaml" => lambda {|r| YAML.load(File.read(r)) },
+          ".yaml" => lambda {|r| load_yaml_parameters(r) },
           ".OLD" => lambda {|x| remote_param_old(x) },
-          "" =>  lambda {|x| remote_param_default(x)}
+          "" =>  lambda {|x| remote_param_default(x) }
         }
       end
-
 
       #this method is identical to that in the other class--migrate up to
       #CloudFormation class?
