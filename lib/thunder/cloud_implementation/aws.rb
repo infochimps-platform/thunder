@@ -1,4 +1,6 @@
-#######################
+require 'base64'
+
+######################
 # AMAZON WEB SERVICES #
 #######################
 #
@@ -115,6 +117,11 @@ module Thunder
         File.join(params[:stack], key)
       end
 
+      def persistent_base_url(params)
+        s3file = remote_file_bucket.objects[persistent_key params]
+        s3file.public_url
+      end
+
       def persist_remote_file params
         s3file = remote_file_bucket.objects[persistent_key params]
         s3file.write(file: params[:filename], acl: :public_read)
@@ -199,10 +206,20 @@ module Thunder
           hash[item[0]] = OLD_TRIGGER; hash }
       end
 
+      def load_yaml_parameters(file)
+        o = YAML.load(File.read(file))
+        o.keys.each do |k|
+          if o[k].respond_to? :has_key?
+            o[k] = Base64.strict_encode64( o[k]["base64"]) if o[k].has_key? "base64"
+          end
+        end
+        return o
+      end
+
       def parameters_parsers()
         return {
           ".json" => lambda {|r| JSON.parse(File.read(r)) },
-          ".yaml" => lambda {|r| YAML.load(File.read(r)) },
+          ".yaml" => lambda {|r| load_yaml_parameters(r) },
           ".OLD" => lambda {|x| remote_param_old(x) },
           "" =>  lambda {|x| remote_param_default(x) }
         }
