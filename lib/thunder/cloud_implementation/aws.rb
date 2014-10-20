@@ -117,6 +117,11 @@ module Thunder
         File.join(params[:stack], key)
       end
 
+      def persistent_base_url(params)
+        s3file = remote_file_bucket.objects[persistent_key params]
+        s3file.public_url
+      end
+
       def persist_remote_file params
         s3file = remote_file_bucket.objects[persistent_key params]
         s3file.write(file: params[:filename], acl: :public_read)
