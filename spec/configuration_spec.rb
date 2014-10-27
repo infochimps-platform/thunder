@@ -84,7 +84,7 @@ describe Thunder::Configuration do
   context '#internal_with_placeholders' do
     it 'adds missing attributes with a null value' do
       subject.populate!(default: { aws_access_key_id: 'foo' })
-      subject.internal_with_placeholders.keys do |scope|
+      subject.internal_with_placeholders.each_pair do |_, scope|
         expect(subject.all_options.all?{ |opt| scope.key? opt }).to be_true
       end
       expect(subject.internal_with_placeholders[:default][:aws_access_key_id]).to eq('foo')
