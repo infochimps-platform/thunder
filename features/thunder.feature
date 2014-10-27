@@ -42,6 +42,16 @@ Feature: Thunder
     Thunder Config
     If you don't know (or don't care) the values, leave them blank.
     If you want to use the old value, leave it blank.
+    Stack flavor:  [aws, openstack] (aws) aws
+    Poll events timeout (in seconds): 10
+    aws_access_key_id:  abc
+    aws_secret_access_key:  123
+    region:  us-east-1
+    openstack_auth_url:  whatever.com
+    openstack_username:  johnny
+    openstack_tenant:  shazam
+    openstack_api_key:  password
+    connection_options:  none
     Done. Further changes can be made at thunder.yaml
     """
     And  the file "thunder.yaml" should contain:
