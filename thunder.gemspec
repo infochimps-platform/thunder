@@ -22,12 +22,13 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency('bundler', '~> 1.6')
 
-  gem.add_dependency('aws-sdk',     '~> 1.50.0')
-  gem.add_dependency('cfndsl',      '~> 0.1.4')
-  gem.add_dependency('fog',         '~> 1.23.0')
-  gem.add_dependency('formatador',  '~> 0.2.5')
-  gem.add_dependency('parseconfig', '~> 1.0.4')
-  gem.add_dependency('rest-client', '~> 1.7.2')
-  gem.add_dependency('sshkey',      '~> 1.6.1')
-  gem.add_dependency('thor',        '~> 0.19.1')
+  gem.add_dependency('activesupport', '~> 4.1.5')
+  gem.add_dependency('aws-sdk',       '~> 1.50.0')
+  gem.add_dependency('cfndsl',        '~> 0.1.4')
+  gem.add_dependency('fog',           '~> 1.23.0')
+  gem.add_dependency('formatador',    '~> 0.2.5')
+  gem.add_dependency('parseconfig',   '~> 1.0.4')
+  gem.add_dependency('rest-client',   '~> 1.7.2')
+  gem.add_dependency('sshkey',        '~> 1.6.1')
+  gem.add_dependency('thor',          '~> 0.19.1')
 end

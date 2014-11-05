@@ -13,30 +13,29 @@ module Thunder
 
       attr_reader :compute
 
-      def initialize(thunder_config, options={})
-        super(options)
-
-        @config = config_os(thunder_config)
-        @orch = orch
-        @stacks = hash_stacks(@orch.stacks)
-
-        @compute = Fog::Compute.new(@config.merge({:provider => "OpenStack"}))
-
+      def self.native_config(path = nil)
+        {
+          'openstack_auth_url'    => ENV['OS_AUTH_URL'],
+          'openstack_username'    => ENV['OS_USERNAME'],
+          'openstack_tenant'      => ENV['OS_TENANT_NAME'],
+          'openstack_api_key'     => ENV['OS_PASSWORD'],
+          'openstack_tenant_id'   => ENV['OS_TENANT_ID'],
+          'openstack_region_name' => ENV['OS_REGION_NAME'],
+          'connection_options'    => {}
+        }
       end
 
-      #################
-      # Native Config #
-      #################
+      def initialize(options)
+        super(options)
+        @config = config_os options
+      end
 
-      def self.get_native
-        {"openstack_auth_url" => ENV["OS_AUTH_URL"],
-          "openstack_username" => ENV["OS_USERNAME"],
-          "openstack_tenant" => ENV["OS_TENANT_NAME"],
-          "openstack_api_key" => ENV["OS_PASSWORD"],
-          "openstack_tenant_id" => ENV["OS_TENANT_ID"],
-          "openstack_region_name" => ENV["OS_REGION_NAME"],
-          "connection_options" => {}
-        }
+      def stacks
+        @stacks ||= hash_stacks orch.stacks
+      end
+
+      def compute
+        @compute ||= Fog::Compute.new(@config.merge(provider: 'OpenStack'))
       end
 
       ##############
@@ -48,7 +47,7 @@ module Thunder
         filtered_parameters = filter_parameters(parameters, template)
 
         begin
-          @orch.stacks.create({:stack_name => name,
+          orch.stacks.create({:stack_name => name,
                                 :template => template.to_json,
                                 :parameters => filtered_parameters,
                                 :timeout_mins => 600
@@ -60,7 +59,7 @@ module Thunder
 
       def delete(name)
         stack_id = get_stack_id(name)
-        @orch.delete_stack(name, stack_id)
+        orch.delete_stack(name, stack_id)
       end
 
       def update(name, template, parameterss)
@@ -78,7 +77,7 @@ module Thunder
 
         #do it
         stack_id = get_stack_id(name)
-        @orch.update_stack(stack_id, name,
+        orch.update_stack(stack_id, name,
                            {:stack_name => name,
                              :template => template.to_json,
                              :parameters => filtered_parameters,
@@ -92,7 +91,7 @@ module Thunder
       # Observe #
       ###########
       def present_stacks
-        @orch.stacks.map { |stak| { :Name   => stak.stack_name,
+        orch.stacks.map { |stak| { :Name   => stak.stack_name,
             :Status => stak.stack_status,
             :Reason => stak.stack_status_reason } }
       end
@@ -202,7 +201,7 @@ module Thunder
       #get the id of the stack called stack_name
       #stacks is a hash such that {name => stack, ...}
       def get_stack_id(stack_name)
-        @stacks[stack_name].id
+        stacks[stack_name].id
       end
 
       def display_events(events, options)
@@ -223,7 +222,7 @@ module Thunder
       ############
 
       def get_pubkey name
-        key_pairs = @compute.list_key_pairs.body["keypairs"]
+        key_pairs = compute.list_key_pairs.body["keypairs"]
         key_pairs = key_pairs.map { |kp| kp["keypair"] } #flatten
 
         key_pair = key_pairs.select { |x| x["name"] == name }
@@ -239,11 +238,11 @@ module Thunder
       end
 
       def delete_pubkey name
-        @compute.delete_key_pair name
+        compute.delete_key_pair name
       end
 
       def send_key(name, public_key)
-        @compute.create_key_pair(name, public_key)
+        compute.create_key_pair(name, public_key)
       end
 
       ###############
@@ -266,7 +265,7 @@ module Thunder
       end
 
       def orch
-        return @orch || Fog::Orchestration.new({:provider => 'openstack'}.merge(@config))
+        @orch ||= Fog::Orchestration.new({ provider: 'openstack'}.merge(@config))
       end
 
       #fog returns arrays of stacks. we want a hash. to look stuff up.

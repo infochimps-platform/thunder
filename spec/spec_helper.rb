@@ -13,6 +13,6 @@ require 'thunder'
 
 Dir[File.expand_path('../support/**/*.rb', __FILE__)].each{ |f| require f }
 
-RSpec.configure do |rspec|
+RSpec.configure do
   include Aruba::Api
 end
