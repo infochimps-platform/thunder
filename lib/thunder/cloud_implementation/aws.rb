@@ -205,7 +205,7 @@ module Thunder
       def parameters_parsers
         {
           '.json' => lambda{ |r| JSON.parse File.read(r) },
-          '.yaml' => lambda{ |r| YAML.load File.read(r) },
+          '.yaml' => lambda{ |r| load_yaml_parameters(r) },
           '.OLD'  => lambda{ |x| remote_param_old x },
           ''      => lambda{ |x| remote_param_default x },
         }
