@@ -254,11 +254,11 @@ module Thunder
       def config_os(os_vars)
         creds = {}
 
-        creds[:openstack_auth_url] = os_vars["openstack_auth_url"]
-        creds[:openstack_username] = os_vars["openstack_username"]
-        creds[:openstack_tenant] = os_vars["openstack_tenant"]
-        creds[:openstack_api_key] = os_vars["openstack_api_key"]
-        creds[:connection_options] = os_vars["connection_options"] || {}
+        creds[:openstack_auth_url] = os_vars[:openstack_auth_url]
+        creds[:openstack_username] = os_vars[:openstack_username]
+        creds[:openstack_tenant] = os_vars[:openstack_tenant]
+        creds[:openstack_api_key] = os_vars[:openstack_api_key]
+        creds[:connection_options] = os_vars[:connection_options] || {}
 
         creds[:connection_options] ||= {} #JSON.parse(creds[:connection_options]) if creds[:connection_options]
         return creds
