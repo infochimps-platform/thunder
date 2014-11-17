@@ -1,8 +1,7 @@
 PATH
   remote: .
   specs:
-    thunder (1.3.2)
-      activesupport (~> 4.1.5)
+    thunder (1.2.1)
       aws-sdk (~> 1.50.0)
       cfndsl (~> 0.1.4)
       fog (~> 1.23.0)
@@ -15,12 +14,6 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
-    activesupport (4.1.8)
-      i18n (~> 0.6, >= 0.6.9)
-      json (~> 1.7, >= 1.7.7)
-      minitest (~> 5.1)
-      thread_safe (~> 0.1)
-      tzinfo (~> 1.1)
     aruba (0.6.1)
       childprocess (>= 0.3.6)
       cucumber (>= 1.1.1)
@@ -29,8 +22,8 @@ GEM
       json (~> 1.4)
       nokogiri (>= 1.4.4)
     builder (3.2.2)
-    cfndsl (0.1.6)
-    childprocess (0.5.5)
+    cfndsl (0.1.5)
+    childprocess (0.5.3)
       ffi (~> 1.0, >= 1.0.11)
     cucumber (1.3.17)
       builder (>= 2.1.2)
@@ -40,8 +33,8 @@ GEM
       multi_test (>= 0.1.1)
     diff-lcs (1.2.5)
     docile (1.1.5)
-    excon (0.41.0)
-    ffi (1.9.6)
+    excon (0.39.6)
+    ffi (1.9.3)
     fog (1.23.0)
       fog-brightbox
       fog-core (~> 1.23)
@@ -49,7 +42,7 @@ GEM
       fog-softlayer
       ipaddress (~> 0.5)
       nokogiri (~> 1.5, >= 1.5.11)
-    fog-brightbox (0.6.1)
+    fog-brightbox (0.5.1)
       fog-core (~> 1.22)
       fog-json
       inflecto
@@ -62,28 +55,26 @@ GEM
       net-ssh (>= 2.1.3)
     fog-json (1.0.0)
       multi_json (~> 1.0)
-    fog-softlayer (0.3.24)
+    fog-softlayer (0.3.17)
       fog-core
       fog-json
     formatador (0.2.5)
     gherkin (2.12.2)
       multi_json (~> 1.3)
-    i18n (0.6.11)
     inflecto (0.0.2)
     ipaddress (0.8.0)
     json (1.8.1)
-    mime-types (2.4.3)
-    mini_portile (0.6.1)
-    minitest (5.4.3)
+    mime-types (2.3)
+    mini_portile (0.6.0)
     multi_json (1.10.1)
     multi_test (0.1.1)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.1)
-    netrc (0.8.0)
-    nokogiri (1.6.4.1)
-      mini_portile (~> 0.6.0)
-    parseconfig (1.0.6)
+    netrc (0.7.7)
+    nokogiri (1.6.3.1)
+      mini_portile (= 0.6.0)
+    parseconfig (1.0.4)
     rake (10.3.2)
     rest-client (1.7.2)
       mime-types (>= 1.16, < 3.0)
@@ -103,16 +94,13 @@ GEM
     simplecov-html (0.8.0)
     sshkey (1.6.1)
     thor (0.19.1)
-    thread_safe (0.3.4)
-    tzinfo (1.2.2)
-      thread_safe (~> 0.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   aruba (~> 0.6.0)
-  bundler (~> 1.6)
+  bundler (~> 1.6.2)
   cucumber (~> 1.3.16)
   rake (~> 10.3.2)
   rspec (~> 2.14.0)

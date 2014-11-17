@@ -9,7 +9,7 @@ module Thunder
 
       # This builds up a list of extra parameters to pass to cfndsl.
       sym_lookup = { ".yaml" => :yaml, ".json" => :json }
-      @template_generation_extras = (options[:generation_parameters] || []).map {|f| [sym_lookup[File.extname(f)], f] }
+      @template_generation_extras = (options["generation_parameters"] || []).map {|f| [sym_lookup[File.extname(f)], f] }
       bad_generators = @template_generation_extras.select {|f| !f[0] }.map {|f| f[1]}
       throw Exception.new("Unknown generation parameter file types: #{bad_generators.join ', '}") if bad_generators.length > 0
 

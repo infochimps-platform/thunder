@@ -8,19 +8,29 @@ module Thunder
       FAILURE = 1
 
       no_commands do
-        def timeout
-          configuration[:poll_events_timeout]
+
+        def config_options
+          return parent_options
         end
 
-        def bell
-          STDERR.puts "\a" if thor_options[:terminal_bell]
+        def timeout
+          @timeout ||= load_config["poll_events_timeout"] #in seconds
         end
       end
 
-      desc 'poll events name', "Poll a stack's events. c.f. poll-stack-events"
-      method_option :event_bell,    aliases: '-b', type: :boolean, desc: 'Print bell/alert when a new event occurs.'
-      method_option :terminal_bell, aliases: '-B', type: :boolean, desc: 'Print bell/alert when termination reached.'
-      method_option :delete,        aliases: '-d', type: :boolean, desc: 'Count as SUCCESS if stack name is gone.'
+      desc "poll events name", "Poll a stack's events. c.f. poll-stack-events"
+      method_option :event_bell,
+      :aliases => "-b",
+      :type => :boolean,
+      :desc => "Print bell/alert when a new event occurs."
+      method_option :terminal_bell,
+      :aliases => "-B",
+      :type => :boolean,
+      :desc => "Print bell/alert when termination reached."
+      method_option :delete,
+      :aliases => "-d",
+      :type => :boolean,
+      :desc => "Count as SUCCESS if stack name is gone."
       def events(name)
         start = Time.now
         offset = 0
@@ -76,15 +86,23 @@ module Thunder
               when 'DELETE_COMPLETE'
                 bell
                 exit SUCCESS
-              end
-            end
-          end
+              else
+              end #case
+            end #if tail_event
+          end #if events
           offset = events.length
           sleep POLL_SLEEP
-        end
-        say 'While loop exit -- time out?'
+        end #while
+        say "While loop exit -- time out?"
         bell
       end
+
+      no_commands do
+        def bell
+          STDERR.puts "\a" if options[:terminal_bell]
+        end
+      end
+
     end
   end
 end

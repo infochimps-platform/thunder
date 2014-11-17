@@ -49,4 +49,3 @@ Gemfile.lock
 **/migrate-devipa-local-params.yaml
 .rbenv-gemsets
 .ruby-version
-tmp/

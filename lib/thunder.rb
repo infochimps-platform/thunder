@@ -1,4 +1,3 @@
-require 'active_support/core_ext/hash/keys'
 require 'aws-sdk'
 require 'cfndsl'
 require 'etc'
@@ -17,7 +16,6 @@ require 'thunder/cloud_implementation'
 require 'thunder/cloud_implementation/aws'
 require 'thunder/cloud_implementation/openstack'
 require 'thunder/version'
-require 'thunder/configuration'
 require 'thunder/connection'
 
 require 'thunder/subcommand/poll'
