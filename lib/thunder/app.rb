@@ -35,6 +35,28 @@ module Thunder
       say "Config updated with native #{flavor}"
     end
 
+    desc 'info', 'Display info about currently configured cloud connection. Optional [STACK]'
+    def info(stack_name = nil)
+      implementation_selector == :openstack ? os_info : aws_info
+      if stack_name
+        exist_info = con.present_stacks.find{ |s| s[:Name] == stack_name } ? 'exists' : 'does not exist'
+        say "Stack: '#{stack_name}' #{exist_info}"
+      end
+    end
+
+    no_commands do
+      def aws_info
+        say "Account Alias: #{con.iam.account_alias}"
+        say "Account Id: #{con.account_id}"
+        region = configuration[:region]
+        say "Region: #{region} (#{con.region_map[region]})"
+      end
+
+      def os_info
+        #TODO
+      end
+    end
+
     desc 'stack [COMMAND]', 'Stack actions'
     subcommand 'stack', Subcommand::Stack
 

@@ -45,6 +45,10 @@ module Thunder
         @s3 ||= ::AWS::S3.new(region: 'us-east-1')
       end
 
+      def iam
+        @iam ||= ::AWS::IAM.new
+      end
+
       def config_aws(thunder_config)
         ::AWS.config(region: thunder_config[:region],
                      access_key_id: thunder_config[:aws_access_key_id],
@@ -231,6 +235,20 @@ module Thunder
         return filtered_parameters
       end
 
+      def region_map
+        {
+          'us-east-1'      => 'N. Virginia',
+          'us-west-1'      => 'N. California',
+          'us-west-2'      => 'Oregon',
+          'eu-west-1'      => 'Ireland',
+          'eu-central-1'   => 'Frankfurt',
+          'ap-southeast-1' => 'Singapore',
+          'ap-southeast-2' => 'Sydney',
+          'ap-northeast-1' => 'Tokyo',
+          'sa-east-1'      => 'Sao Paulo',
+        }
+      end
+
       def display_events(events, options)
         table = []
         events.each do |event|
@@ -292,6 +310,19 @@ module Thunder
 
       def send_key(name, public_key)
         ec2.key_pairs.import(name, public_key)
+      end
+
+      def users
+        iam.users
+      end
+
+      def arn(name = nil)
+        name ? users[name].arn : users.first.arn
+      end
+
+      def account_id(name = nil)
+        match = arn(name).match(/arn:(?<partition>[^:]*):(?<service>[^:]*):(?<region>[^:]*):(?<account>\d+):(?<resourcetype>[^:]*)\/(?<resource>[^:]*)/)
+        match[:account]
       end
 
     end

@@ -11,6 +11,7 @@ describe Thunder::App do
           thunder config .*
           thunder config_import .*
           thunder help .*
+          thunder info .*
           thunder keypair .*
           thunder poll .*
           thunder remote_file .*
