@@ -27,6 +27,16 @@ module Thunder
       return parsers.has_key?(extension)
     end
 
+    # Get a string that we can create a stack with from a parsed template
+    def get_template_text(template)
+      if template.has_key?('_thunder_url')
+        return template['_thunder_url']
+      else
+        return template.to_json
+      end
+    end
+
+
     # This loads a file as directed by parsers and returns the result
     def hashload(filename, parsers)
       parser = nil

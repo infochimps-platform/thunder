@@ -63,12 +63,7 @@ module Thunder
         parameters = load_parameters(parameterss)
         filtered_parameters = filter_parameters(parameters, template)
 
-        template_text = nil
-        if template.has_key?('_template_url')
-          template_text = template['_template_url']
-        else
-          template_text = template.to_json
-        end
+        template_text = get_template_text(template)
 
         begin
           cfm.stacks.create(name, template_text, parameters: filtered_parameters)
@@ -94,13 +89,7 @@ module Thunder
         filtered_parameters = filter_parameters(parameters, template)
         formatted_parameters = aws_parameter_json(filtered_parameters)
 
-
-        template_text = nil
-        if template.has_key?('_template_url')
-          template_text = template['_template_url']
-        else
-          template_text = template.to_json
-        end
+        template_text = get_template_text(template)
 
         #do it
         cfm.stacks[name].update(:template => template_text,
