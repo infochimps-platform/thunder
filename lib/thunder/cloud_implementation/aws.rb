@@ -63,8 +63,15 @@ module Thunder
         parameters = load_parameters(parameterss)
         filtered_parameters = filter_parameters(parameters, template)
 
+        template_text = nil
+        if template.has_key?('_template_url')
+          template_text = template['_template_url']
+        else
+          template_text = template.to_json
+        end
+
         begin
-          cfm.stacks.create(name, template.to_json, parameters: filtered_parameters)
+          cfm.stacks.create(name, template_text, parameters: filtered_parameters)
         rescue ::AWS::CloudFormation::Errors::AlreadyExistsException
           puts "Stack already exists."
         end
@@ -87,8 +94,16 @@ module Thunder
         filtered_parameters = filter_parameters(parameters, template)
         formatted_parameters = aws_parameter_json(filtered_parameters)
 
+
+        template_text = nil
+        if template.has_key?('_template_url')
+          template_text = template['_template_url']
+        else
+          template_text = template.to_json
+        end
+
         #do it
-        cfm.stacks[name].update(:template => template.to_json,
+        cfm.stacks[name].update(:template => template_text,
                                 :parameters => formatted_parameters)
       end
 
