@@ -15,4 +15,8 @@ Dir[File.expand_path('../support/**/*.rb', __FILE__)].each{ |f| require f }
 
 RSpec.configure do
   include Aruba::Api
+
+  def fixtures(filename)
+    File.join(File.dirname(__FILE__), 'fixtures', filename)
+  end
 end
