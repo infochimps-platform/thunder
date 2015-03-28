@@ -1,5 +1,3 @@
-require 'open-uri'
-
 # abstract connection module:
 #   - allows sharing of common methods (what few there may be)
 module Thunder
