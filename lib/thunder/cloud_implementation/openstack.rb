@@ -140,10 +140,10 @@ module Thunder
       def template_parsers(rmt_template)
         extras = @template_generation_extras
         extras.push [:raw, 'OrchestrationEnvironment = "heat"']
-        return {
-          ".json" => lambda {|r| JSON.parse(File.read(r)) },
-          ".rb"   => lambda {|r| JSON.parse( CfnDsl::eval_file_with_extras(r, extras).to_json)},
-          "" => lambda { |r| raise Exception.new("Openstack templates must be manually resupplied on update.") }
+        {
+          '.json' => lambda{ |r| data = nil; open(r){ |f| data = JSON.parse(f.read) } ; data },
+          '.rb'   => lambda{ |r| JSON.parse CfnDsl.eval_file_with_extras(r, extras).to_json },
+          ''      => lambda{ |r| raise Exception.new 'Openstack templates must be manually resupplied on update.' }
         }
       end
 

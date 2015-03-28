@@ -175,12 +175,13 @@ module Thunder
       def template_parsers(rmt_template)
         extras = @template_generation_extras
         extras.push [:raw, 'OrchestrationEnvironment = "cloudformation"']
-        return {
-          ".json" => lambda {|r| JSON.parse(File.read(r)) },
-          ".rb"   => lambda {|r| JSON.parse(CfnDsl::eval_file_with_extras(r, extras).to_json)},
-          "" => lambda { |x|
-            raise Exception.new("Template value: #{x} -- Did you leave off the file extension?") unless rmt_template
-            JSON.parse(cfm.stacks[x].template) }
+        {
+          '.json' => lambda{ |r| data = nil; open(r){ |f| data = JSON.parse(f.read) } ; data },
+          '.rb'   => lambda{ |r| JSON.parse CfnDsl.eval_file_with_extras(r, extras).to_json },
+          ''      => lambda do |r|
+            raise Exception.new("Template value: #{r} -- Did you leave off the file extension?") unless rmt_template
+            JSON.parse cfm.stacks[r].template
+          end
         }
       end
 

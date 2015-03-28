@@ -36,27 +36,16 @@ module Thunder
 
     # This loads a file as directed by parsers and returns the result
     def hashload(filename, parsers)
-      parser = nil
-      if /^https:\/\// =~ filename
-        # Assume that the file is a json file stored on the web. Load it up as a ruby
-        # object, but add a special value to it so we can refer to it by url later.
-        parser = lambda do |r|
-          result = {}
-          open(r) do |f|
-            result = JSON.parse(f.read() )
-          end
-
-          result['_thunder_url'] = r
-          return result
-        end
-
-      else
-        extension = File.extname(filename)
-        err = "Filename #{filename} appears to have an unsupported extension: #{extension}. I bet you're wondering 'what do you mean, that IS supported.' If that's the case, MAKE SURE YOU REMEMBERED TO INCLUDE THE STACK NAME IN YOUR COMMAND--ALL YOUR PARAMS ARE GETTING OFFSET, AND THIS IS THE EIGHTH TIME I'VE FORGOTTEN THIS AND REMEMBERED THE ROOT CAUSE. (RageException) "
-        raise Exception.new(err) unless supported_format(extension,parsers)
-        parser = parsers[extension]
-      end
-      return parser.call(filename)
+      extension = File.extname filename
+      msg = <<-MSG.gsub(/^ {8}/, '')
+        Filename #{filename} appears to have an unsupported extension: #{extension}.
+        I bet you're wondering 'what do you mean, that IS supported.' If that's the case,
+        MAKE SURE YOU REMEMBERED TO INCLUDE THE STACK NAME IN YOUR COMMAND: ALL YOUR PARAMS ARE GETTING OFFSET,
+        AND THIS IS THE EIGHTH TIME I'VE FORGOTTEN THIS AND REMEMBERED THE ROOT CAUSE. (RageException)
+      MSG
+      fail Exception, msg unless supported_format(extension, parsers)
+      parser = parsers[extension]
+      parser.call(filename).tap{ |hsh| hsh['_thunder_url'] = filename if filename =~ %r{^https://} }
     end
 
     #this loads a sequence of hashes from filenames and merges them together.
