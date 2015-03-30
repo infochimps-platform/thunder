@@ -46,9 +46,11 @@ module Thunder
         parameters = load_parameters(parameterss)
         filtered_parameters = filter_parameters(parameters, template)
 
+        template_text = get_template_text(template)
+
         begin
           orch.stacks.create({:stack_name => name,
-                                :template => template.to_json,
+                                :template => template_text,
                                 :parameters => filtered_parameters,
                                 :timeout_mins => 600
                               })
@@ -75,11 +77,14 @@ module Thunder
         parameters = load_parameters(parameterss)
         filtered_parameters = filter_parameters(parameters, template)
 
+        template_text = get_template_text(template)
+
         #do it
         stack_id = get_stack_id(name)
+
         orch.update_stack(stack_id, name,
                            {:stack_name => name,
-                             :template => template.to_json,
+                             :template => template_text,
                              :parameters => filtered_parameters,
                              :existing_parameters => true,
                              :timeout_mins => 600
@@ -135,10 +140,10 @@ module Thunder
       def template_parsers(rmt_template)
         extras = @template_generation_extras
         extras.push [:raw, 'OrchestrationEnvironment = "heat"']
-        return {
-          ".json" => lambda {|r| JSON.parse(File.read(r)) },
-          ".rb"   => lambda {|r| JSON.parse( CfnDsl::eval_file_with_extras(r, extras).to_json)},
-          "" => lambda { |r| raise Exception.new("Openstack templates must be manually resupplied on update.") }
+        {
+          '.json' => lambda{ |r| data = nil; open(r){ |f| data = JSON.parse(f.read) } ; data },
+          '.rb'   => lambda{ |r| JSON.parse CfnDsl.eval_file_with_extras(r, extras).to_json },
+          ''      => lambda{ |r| raise Exception.new 'Openstack templates must be manually resupplied on update.' }
         }
       end
 

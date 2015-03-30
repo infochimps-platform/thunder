@@ -22,17 +22,30 @@ module Thunder
     # HASHLOADING #
 
     def supported_format(extension, parsers)
-      return parsers.has_key?(extension)
+      parsers.key? extension
+    end
+
+    # Get a string that we can create a stack with from a parsed template
+    def get_template_text(template)
+      if template.key? '_thunder_url'
+        return template['_thunder_url']
+      else
+        return template.to_json
+      end
     end
 
     # This loads a file as directed by parsers and returns the result
     def hashload(filename, parsers)
-      extension = File.extname(filename)
-      err = "Filename #{filename} appears to have an unsupported extension: #{extension}. I bet you're wondering 'what do you mean, that IS supported.' If that's the case, MAKE SURE YOU REMEMBERED TO INCLUDE THE STACK NAME IN YOUR COMMAND--ALL YOUR PARAMS ARE GETTING OFFSET, AND THIS IS THE EIGHTH TIME I'VE FORGOTTEN THIS AND REMEMBERED THE ROOT CAUSE. (RageException) "
-      raise Exception.new(err) unless supported_format(extension,parsers)
-
+      extension = File.extname filename
+      msg = <<-MSG.gsub(/^ {8}/, '')
+        Filename #{filename} appears to have an unsupported extension: #{extension}.
+        I bet you're wondering 'what do you mean, that IS supported.' If that's the case,
+        MAKE SURE YOU REMEMBERED TO INCLUDE THE STACK NAME IN YOUR COMMAND: ALL YOUR PARAMS ARE GETTING OFFSET,
+        AND THIS IS THE EIGHTH TIME I'VE FORGOTTEN THIS AND REMEMBERED THE ROOT CAUSE. (RageException)
+      MSG
+      fail Exception, msg unless supported_format(extension, parsers)
       parser = parsers[extension]
-      return parser.call(filename)
+      parser.call(filename).tap{ |hsh| hsh['_thunder_url'] = filename if filename =~ %r{^https://} }
     end
 
     #this loads a sequence of hashes from filenames and merges them together.

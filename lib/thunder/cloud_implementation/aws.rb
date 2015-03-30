@@ -63,8 +63,10 @@ module Thunder
         parameters = load_parameters(parameterss)
         filtered_parameters = filter_parameters(parameters, template)
 
+        template_text = get_template_text(template)
+
         begin
-          cfm.stacks.create(name, template.to_json, parameters: filtered_parameters)
+          cfm.stacks.create(name, template_text, parameters: filtered_parameters)
         rescue ::AWS::CloudFormation::Errors::AlreadyExistsException
           puts "Stack already exists."
         end
@@ -87,8 +89,10 @@ module Thunder
         filtered_parameters = filter_parameters(parameters, template)
         formatted_parameters = aws_parameter_json(filtered_parameters)
 
+        template_text = get_template_text(template)
+
         #do it
-        cfm.stacks[name].update(:template => template.to_json,
+        cfm.stacks[name].update(:template => template_text,
                                 :parameters => formatted_parameters)
       end
 
@@ -171,12 +175,13 @@ module Thunder
       def template_parsers(rmt_template)
         extras = @template_generation_extras
         extras.push [:raw, 'OrchestrationEnvironment = "cloudformation"']
-        return {
-          ".json" => lambda {|r| JSON.parse(File.read(r)) },
-          ".rb"   => lambda {|r| JSON.parse(CfnDsl::eval_file_with_extras(r, extras).to_json)},
-          "" => lambda { |x|
-            raise Exception.new("Template value: #{x} -- Did you leave off the file extension?") unless rmt_template
-            JSON.parse(cfm.stacks[x].template) }
+        {
+          '.json' => lambda{ |r| data = nil; open(r){ |f| data = JSON.parse(f.read) } ; data },
+          '.rb'   => lambda{ |r| JSON.parse CfnDsl.eval_file_with_extras(r, extras).to_json },
+          ''      => lambda do |r|
+            raise Exception.new("Template value: #{r} -- Did you leave off the file extension?") unless rmt_template
+            JSON.parse cfm.stacks[r].template
+          end
         }
       end
 
