@@ -1,5 +1,5 @@
 require 'active_support/core_ext/hash/keys'
-require 'aws-sdk'
+require 'aws-sdk-v1'
 require 'cfndsl'
 require 'etc'
 require 'fileutils'
