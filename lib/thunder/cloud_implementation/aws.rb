@@ -1,4 +1,5 @@
 require 'base64'
+require 'aws-sdk-v1'
 
 ######################
 # AMAZON WEB SERVICES #
