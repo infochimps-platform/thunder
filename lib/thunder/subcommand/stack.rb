@@ -25,6 +25,13 @@ module Thunder
         con.create(name, raw_template, *parameterss)
       end
 
+      ##########
+      # Status #
+      ##########
+      desc "display the status for the named stack"
+      def status(name)
+        puts con.status(name)
+      end
 
       ##########
       # Update #

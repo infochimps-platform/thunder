@@ -144,6 +144,10 @@ module Thunder
             :Reason => stak.status_reason } }
       end
 
+      def status(name)
+        cfm.stacks[name].status
+      end
+
       def outputs(name)
         cfm.stacks[name].outputs.map { |out| { :Key=>out.key, :Value=>out.value } }
       end
