@@ -28,7 +28,7 @@ module Thunder
       ##########
       # Status #
       ##########
-      desc "display the status for the named stack"
+      desc "status name","display the status for the named stack"
       def status(name)
         puts con.status(name)
       end
