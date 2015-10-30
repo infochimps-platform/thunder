@@ -30,7 +30,11 @@ module Thunder
       ##########
       desc "status name","display the status for the named stack"
       def status(name)
-        puts con.status(name)
+        begin
+          puts con.status(name)
+        rescue
+          puts "UNKNOWN"
+        end
       end
 
       ##########
