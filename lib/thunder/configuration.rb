@@ -13,7 +13,7 @@ module Thunder
     end
 
     def aws_options
-      %w(aws_access_key_id aws_secret_access_key region).map(&:to_sym)
+      %w(aws_access_key_id aws_secret_access_key region aws_session_token).map(&:to_sym)
     end
 
     def os_options

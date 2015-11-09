@@ -101,6 +101,10 @@ module Thunder
             :Reason => stak.stack_status_reason } }
       end
 
+      def status(name)
+        orch.stacks[name].status
+      end
+
       def outputs(name)
         outputs = os_outputs(name, get_stack_id(name))
         outputs.map { |out| {:Key => out["output_key"],
