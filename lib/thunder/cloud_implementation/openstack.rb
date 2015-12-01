@@ -316,7 +316,7 @@ module Thunder
         svc_catalog = Hash[svc_catalog.map { |x| [x["name"], x] }]
 
         #retrieve
-        api_url = svc_catalog["heat"]["endpoints"][0]["internalURL"]
+        api_url = svc_catalog["heat"]["endpoints"][0]["publicURL"]
         api_call = api_url+api_stub
         response = os_api("GET", api_call, token, {})
         response = JSON.parse(response)
