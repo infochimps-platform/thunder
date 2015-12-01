@@ -50,7 +50,7 @@ module Thunder
 
         begin
           orch.stacks.create({:stack_name => name,
-                                :template => template_text,
+                                :template_url => template_text,
                                 :parameters => filtered_parameters,
                                 :timeout_mins => 600
                               })
@@ -84,7 +84,7 @@ module Thunder
 
         orch.update_stack(stack_id, name,
                            {:stack_name => name,
-                             :template => template_text,
+                             :template_url => template_text,
                              :parameters => filtered_parameters,
                              :existing_parameters => true,
                              :timeout_mins => 600
