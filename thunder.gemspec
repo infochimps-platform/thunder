@@ -25,7 +25,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency('activesupport', '~> 4.1.5')
   gem.add_dependency('aws-sdk',       '~> 1.50.0')
   gem.add_dependency('cfndsl',        '>= 0.3.2')
-  gem.add_dependency('fog',           '~> 1.23.0')
+  gem.add_dependency('fog',           '~> 1.37.0')
   gem.add_dependency('formatador',    '~> 0.2.5')
   gem.add_dependency('parseconfig',   '~> 1.0.4')
   gem.add_dependency('rest-client',   '~> 1.7.2')
