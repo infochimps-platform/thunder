@@ -267,6 +267,8 @@ module Thunder
         creds[:openstack_username] = os_vars[:openstack_username]
         creds[:openstack_tenant] = os_vars[:openstack_tenant]
         creds[:openstack_api_key] = os_vars[:openstack_api_key]
+        creds[:openstack_project_domain] = os_vars[:openstack_project_domain]
+        creds[:openstack_user_domain] = os_vars[:openstack_user_domain]
         creds[:connection_options] = os_vars[:connection_options] || {}
 
         creds[:connection_options] ||= {} #JSON.parse(creds[:connection_options]) if creds[:connection_options]

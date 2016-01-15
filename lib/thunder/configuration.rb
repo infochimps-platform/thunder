@@ -17,7 +17,7 @@ module Thunder
     end
 
     def os_options
-      %w(openstack_auth_url openstack_username openstack_tenant openstack_api_key connection_options).map(&:to_sym)
+      %w(openstack_auth_url openstack_username openstack_tenant openstack_api_key openstack_project_domain openstack_user_domain connection_options).map(&:to_sym)
     end
 
     def all_options
