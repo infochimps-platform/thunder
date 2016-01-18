@@ -267,13 +267,16 @@ module Thunder
         creds[:openstack_username] = os_vars[:openstack_username]
         creds[:openstack_tenant] = os_vars[:openstack_tenant]
         creds[:openstack_api_key] = os_vars[:openstack_api_key]
+        creds[:openstack_project_domain] = os_vars[:openstack_project_domain]
+        creds[:openstack_user_domain] = os_vars[:openstack_user_domain]
         creds[:connection_options] = os_vars[:connection_options] || {}
 
-        creds[:connection_options] ||= {} #JSON.parse(creds[:connection_options]) if creds[:connection_options]
         return creds
       end
 
       def orch
+        auth_uri_obj = URI.parse(@config[:openstack_auth_url])
+        @auth ||= Fog::OpenStack::authenticate({ provider: 'openstack', openstack_auth_uri: auth_uri_obj, openstack_service_type: 'orchestration', openstack_service_name: 'heat'}.merge(@config), @config[:connection_options])
         @orch ||= Fog::Orchestration.new({ provider: 'openstack'}.merge(@config))
       end
 
@@ -304,21 +307,26 @@ module Thunder
       #keys provided in stack_hole
       PATH_DIVIDER = "/"
       def os_retrieve(api_stub, path)
-        tenant = @config[:openstack_tenant]
-        user = @config[:openstack_username]
-        pass = @config[:openstack_api_key]
-        auth_url = @config[:openstack_auth_url]
 
-        #auth
-        auth = os_auth(auth_url, tenant, user, pass)
-        token = auth["access"]["token"]["id"]
-        svc_catalog = auth["access"]["serviceCatalog"]
-        svc_catalog = Hash[svc_catalog.map { |x| [x["name"], x] }]
+        token = @auth[:token]
+        api_url = @auth[:server_management_url]
 
-        #retrieve
-        api_url = svc_catalog["heat"]["endpoints"][0]["publicURL"]
         api_call = api_url+api_stub
-        response = os_api("GET", api_call, token, {})
+
+        verify_ssl = OpenSSL::SSL::VERIFY_PEER
+        if @config[:connection_options] and not @config[:connection_options][:ssl_verify_peer].nil? and @config[:connection_options][:ssl_verify_peer] == false
+          verify_ssl = OpenSSL::SSL::VERIFY_NONE
+        end
+
+        client = RestClient::Request.new(
+                                         :method => 'GET',
+                                         :url => api_call,
+                                         :headers => {"User-Agent"   => "thunder",
+                                                      "X-Auth-Token" => token},
+                                         :verify_ssl => verify_ssl
+                                         )
+
+        response = client.execute
         response = JSON.parse(response)
 
         # get the result from the desired path
@@ -330,42 +338,6 @@ module Thunder
         return cursor
       end
 
-      # Lowest-level interfaces #
-      #get authentication token and relevant endpoints
-      def os_auth(url,tenant,user,pass)
-
-        authdata = {"auth" =>
-          {"tenantName" => tenant,
-            "passwordCredentials" =>
-            {"username" => user,
-              "password" => pass }}}
-        client = RestClient::Request.new(
-                                         :method => "POST",
-                                         :url => url,
-                                         :headers => {"Content-Type" => "application/json",
-                                           "Accept"       => "application/json"},
-                                         :payload => authdata.to_json,
-                                         )
-
-        response = client.execute
-        return JSON.parse(response)
-      end
-
-
-      def os_api(method, url, token, data)
-
-        client = RestClient::Request.new(
-                                         :method => method,
-                                         :url => url,
-                                         :headers => {"User-Agent"   => "thunder",
-                                           "X-Auth-Token" => token},
-                                         :payload => data.to_json ,
-                                         )
-
-        response = client.execute
-        return response
-
-      end
     end
   end
 end
