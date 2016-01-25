@@ -45,7 +45,7 @@ module Thunder
       MSG
       fail Exception, msg unless supported_format(extension, parsers)
       parser = parsers[extension]
-      parser.call(filename).tap{ |hsh| hsh['_thunder_url'] = filename if filename =~ %r{^https://} }
+      parser.call(filename).tap{ |hsh| hsh['_thunder_url'] = filename if filename =~ %r{^https?://} }
     end
 
     #this loads a sequence of hashes from filenames and merges them together.
